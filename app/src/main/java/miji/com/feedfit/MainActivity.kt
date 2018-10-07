@@ -7,40 +7,51 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.view.*
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 
 class MainActivity : AppCompatActivity() {
 
-    /**
-     * The [android.support.v4.view.PagerAdapter] that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * [android.support.v4.app.FragmentStatePagerAdapter].
-     */
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+    private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //setSupportActionBar(toolbar)
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
+        setSupportActionBar(toolbar)
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-
-        // Set up the ViewPager with the sections adapter.
         mainViewContainer.adapter = mSectionsPagerAdapter
-
         mainViewContainer.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mainViewContainer))
 
-
+        Realm.init(this)
+        realm = Realm.getDefaultInstance()
+        //realm.executeTransaction { realm ->  realm.deleteAll()   }
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (realm.isClosed)
+            realm = Realm.getDefaultInstance()
+
+    }
+
+    override fun onStop() {
+        realm.close()
+        super.onStop()
+    }
+
+    override fun onPause() {
+        realm.close()
+        super.onPause()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
