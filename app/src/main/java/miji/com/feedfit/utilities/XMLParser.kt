@@ -2,7 +2,7 @@ package miji.com.feedfit.utilities
 
 import android.util.Log
 import android.util.Xml
-import miji.com.feedfit.Model.RSS
+import miji.com.feedfit.model.RSS
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.ByteArrayInputStream
@@ -31,11 +31,12 @@ class XMLParser {  // Para más información: @link:https://developer.android.co
         } catch (e: Exception) {
             Log.w(e.message, e)
         } finally {
-            if (items == null) items = ArrayList<RSS>() //Si al terminar el método, el resultado fue nulo, generamos un elemento vacio
+            if (items == null) items = ArrayList() //Si al terminar el método, el resultado fue nulo, generamos un elemento vacio
         }
         return items
     }
 
+    @Throws(XmlPullParserException::class, IOException::class)
     private fun readFeed(parser: XmlPullParser): ArrayList<RSS> { //Se encarga de la lectura de cada entrada del feed y filtra las entradas no necesarias
         val items = ArrayList<RSS>()
         var item = RSS(RSS.ARTICLE_TYPE)
@@ -47,7 +48,7 @@ class XMLParser {  // Para más información: @link:https://developer.android.co
                     XmlPullParser.START_TAG -> if (tagName.equals("item", ignoreCase = true)) item = RSS(RSS.ARTICLE_TYPE)
                     XmlPullParser.TEXT -> text = parser.text
                     XmlPullParser.END_TAG ->
-                        when (tagName) {
+                        when (tagName) { //Al llegar al final del documento, se genera el objeto resultado del parsing
                             "item" -> items.add(item)
                             "link" -> item.link = text
                             "title" -> item.title = text
@@ -78,7 +79,7 @@ class XMLParser {  // Para más información: @link:https://developer.android.co
                 }
             }
         } catch (e: Exception) {
-            Log.e("XMLParser", "The stream cannot be parsed! Is it really well-formed? " + e.message)
+            Log.e("XMLParser", "The stream cannot be parsed, error: ${e.message} ")
         }
         return items
     }
