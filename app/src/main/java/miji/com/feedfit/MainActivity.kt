@@ -1,5 +1,6 @@
 package miji.com.feedfit
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -11,8 +12,12 @@ import android.view.MenuItem
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import miji.com.feedfit.fragments.PlaceholderFragment
+import miji.com.feedfit.fragments.RSSHomeFragment
+import miji.com.feedfit.fragments.dummy.DummyContent
+import miji.com.feedfit.utilities.WebController
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteractionListener {
+
 
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private lateinit var realm: Realm
@@ -29,7 +34,8 @@ class MainActivity : AppCompatActivity() {
         Realm.init(this)
         realm = Realm.getDefaultInstance()
         //realm.executeTransaction { realm ->  realm.deleteAll()   }
-
+        val intent = Intent(applicationContext, WebController::class.java)
+        startService(intent)
     }
 
     override fun onDestroy() {
@@ -81,9 +87,11 @@ class MainActivity : AppCompatActivity() {
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1)
+            return when (position) {
+                0 -> RSSHomeFragment()
+                else -> PlaceholderFragment.newInstance(position + 1)
+            }
+
         }
 
         override fun getCount(): Int {
@@ -92,5 +100,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 }

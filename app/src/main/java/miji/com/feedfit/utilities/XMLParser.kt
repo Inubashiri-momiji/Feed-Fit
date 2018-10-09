@@ -26,7 +26,6 @@ class XMLParser {  // Para más información: @link:https://developer.android.co
             val s = ByteArrayInputStream(stream.toByteArray(charset("ISO-8859-1")))
             parser.setInput(s, "UTF-8")
             parser.nextTag()
-            parser.require(XmlPullParser.START_TAG, null, "rss")
             items = readFeed(parser)
         } catch (e: Exception) {
             Log.w(e.message, e)

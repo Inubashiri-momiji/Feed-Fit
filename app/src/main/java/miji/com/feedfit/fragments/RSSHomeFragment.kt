@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import miji.com.feedfit.R
+import miji.com.feedfit.adapter.RSSHomeRecyclerViewAdapter
 import miji.com.feedfit.fragments.dummy.DummyContent
 import miji.com.feedfit.fragments.dummy.DummyContent.DummyItem
 

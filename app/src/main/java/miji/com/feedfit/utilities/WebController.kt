@@ -61,7 +61,7 @@ class WebController : IntentService("WebController") {
         const val FETCH_SUCCESS = 0
         const val FETCH_TIMEOUT = 1
         //const val CATEGORY = "CATEGORY"
-        const val PENDING_RESULT = "RSS_SERVICE_PENDING_RESULT"
+        val PENDING_RESULT = "RSS_SERVICE_PENDING_RESULT"
         const val PARCELABLE_EXTRAS = "PARCELABLE_EXTRAS"
     }
 
