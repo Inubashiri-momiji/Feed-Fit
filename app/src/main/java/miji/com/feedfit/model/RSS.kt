@@ -5,34 +5,33 @@ import android.os.Parcelable
 
 class RSS() : Parcelable {
 
-    var link: String? = null
-    var title: String? = null
-    var summary: String? = null
-    var id: Int? = null
-    var type: Int? = null
-    var postDate: Long? = null
+    var title: String? = null // Especifica el titulo del feed, si es que tiene
+    var subtitle: String? = null //Especifica un subtitulo, si es que tiene
+    var category: String? = null  //especifica la categoria a la que pertenece el feed, si es que tiene
+    var icon: String? = null //Contiene la url del icono origen del feed, si es que tiene
+    var logo: String? = null //Contiene la url del logo origen del feed, si es que tiene
+    var link: String? = null // especifica el enlace del feed
+    var author: String? = null //especifica el autor, si es que tiene
+    var entries: ArrayList<RSSEntry> = ArrayList()//Especifica las entradas del feed, si es que tiene
 
     constructor(parcel: Parcel) : this() {
-        link = parcel.readString()
         title = parcel.readString()
-        summary = parcel.readString()
-        id = parcel.readValue(Int::class.java.classLoader) as? Int
-        type = parcel.readValue(Int::class.java.classLoader) as? Int
-        postDate = parcel.readValue(Long::class.java.classLoader) as? Long
-    }
-
-
-    constructor(type: Int) : this() {
-        this.type = type
+        subtitle = parcel.readString()
+        category = parcel.readString()
+        icon = parcel.readString()
+        logo = parcel.readString()
+        link = parcel.readString()
+        author = parcel.readString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(link)
         parcel.writeString(title)
-        parcel.writeString(summary)
-        parcel.writeValue(id)
-        parcel.writeValue(type)
-        parcel.writeValue(postDate)
+        parcel.writeString(subtitle)
+        parcel.writeString(category)
+        parcel.writeString(icon)
+        parcel.writeString(logo)
+        parcel.writeString(link)
+        parcel.writeString(author)
     }
 
     override fun describeContents(): Int {
@@ -40,7 +39,6 @@ class RSS() : Parcelable {
     }
 
     companion object CREATOR : Parcelable.Creator<RSS> {
-        const val ARTICLE_TYPE = 0
         override fun createFromParcel(parcel: Parcel): RSS {
             return RSS(parcel)
         }
@@ -49,6 +47,5 @@ class RSS() : Parcelable {
             return arrayOfNulls(size)
         }
     }
-
 
 }

@@ -3,11 +3,11 @@ package miji.com.feedfit.utilities
 import android.util.Log
 import android.util.Xml
 import miji.com.feedfit.model.RSS
+import miji.com.feedfit.model.RSSEntry
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -18,8 +18,8 @@ class XMLParser {  // Para más información: @link:https://developer.android.co
     private var dateFormat: SimpleDateFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm", Locale.getDefault())
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun parse(stream: String): ArrayList<RSS> { //Genera el parsing del XML mediante el uso de XMLpullParser
-        var items: ArrayList<RSS>? = null
+    fun parse(stream: String): RSS { //Genera el parsing del XML mediante el uso de XMLpullParser
+        var items: RSS? = null
         try {
             val parser = Xml.newPullParser()
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
@@ -30,57 +30,51 @@ class XMLParser {  // Para más información: @link:https://developer.android.co
         } catch (e: Exception) {
             Log.w(e.message, e)
         } finally {
-            if (items == null) items = ArrayList() //Si al terminar el método, el resultado fue nulo, generamos un elemento vacio
+            if (items == null) items = RSS() //Si al terminar el método, el resultado fue nulo, generamos un elemento vacio
         }
         return items
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun readFeed(parser: XmlPullParser): ArrayList<RSS> { //Se encarga de la lectura de cada entrada del feed y filtra las entradas no necesarias
-        val items = ArrayList<RSS>()
-        var item = RSS(RSS.ARTICLE_TYPE)
+    private fun readFeed(parser: XmlPullParser): RSS { //Se encarga de la lectura de cada entrada del feed y filtra las entradas no necesarias
+        val rss = RSS()
+        var entry: RSSEntry? = null
         var text: String? = null
         try {
             while (parser.next() != XmlPullParser.END_DOCUMENT) {
-                val tagName = parser.name
-                when (parser.eventType) {
-                    XmlPullParser.START_TAG -> if (tagName.equals("item", ignoreCase = true)) item = RSS(RSS.ARTICLE_TYPE)
+                val tagName = parser.name?.toLowerCase()
+                when (parser.eventType) { //Genera una captura de las variables que encuentra en cada entrada para construir el objeto posteriormente
+                    XmlPullParser.START_TAG -> if (tagName.equals("entry", ignoreCase = true)) entry = RSSEntry()
                     XmlPullParser.TEXT -> text = parser.text
                     XmlPullParser.END_TAG ->
                         when (tagName) { //Al llegar al final del documento, se genera el objeto resultado del parsing
-                            "item" -> items.add(item)
-                            "link" -> item.link = text
-                            "title" -> item.title = text
-                            "pubdate" -> try {
-                                val cal = Calendar.getInstance()
-                                cal.time = dateFormat.parse(text)
-                                cal.set(Calendar.HOUR_OF_DAY, 0)
-                                cal.set(Calendar.MINUTE, 0)
-                                cal.set(Calendar.SECOND, 0)
-                                cal.set(Calendar.MILLISECOND, 0)
-                                item.postDate = cal.timeInMillis
-                            } catch (e: ParseException) {
-                                Log.d("XMLParser", "cannot parse date: " + text!!)
-                            }
 
-                            "guid" -> {
-                                val matcher = regexPattern.matcher(text)
-                                if (matcher.find())
-                                    item.id = Integer.valueOf(matcher.group(1))
-                                else
-                                    item.id = 0
-                            }
-                            "enclosure" -> {
-                                text = parser.getAttributeValue(null, "url")
-                                item.summary = text
-                            }
+                            //Feed
+                            "entry" -> rss.entries.add(entry!!)
+                            "icon" -> rss.icon = text
+                            "logo" -> rss.logo = text
+                            "subtitle" -> rss.subtitle = text
+                            //Entradas
+                            "published" -> entry?.published = text
+                            "content" -> entry?.content = text
+                            "summary" -> entry?.summary = text
+                            //Compartidas
+                            "title" -> if (entry != null) entry.title = text
+                            else rss.title = text
+                            "category" -> if (entry != null) entry.category = text
+                            else rss.category = text
+                            "link" -> if (entry != null) entry.link = text
+                            else rss.link = text
+                            "author" -> if (entry != null) entry.author = text
+                            else rss.author = text
+
                         }
                 }
             }
         } catch (e: Exception) {
             Log.e("XMLParser", "The stream cannot be parsed, error: ${e.message} ")
         }
-        return items
+        return rss
     }
 
 }

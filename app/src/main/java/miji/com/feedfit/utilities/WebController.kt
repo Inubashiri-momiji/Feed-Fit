@@ -34,7 +34,7 @@ class WebController : IntentService("WebController") {
         try {
             val rssItems = parser.parse(String(response.toByteArray(charset("UTF-8"))))
             val result = Intent()
-            result.putParcelableArrayListExtra(PARCELABLE_EXTRAS, rssItems)
+            result.putExtra(PARCELABLE_EXTRAS, rssItems)
             reply?.send(this@WebController, FETCH_SUCCESS, result)
         } catch (e: PendingIntent.CanceledException) {
             Log.e("webController", "onHandleIntent pending intent error", e)
