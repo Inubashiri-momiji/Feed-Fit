@@ -3,5 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="no_connection">Connection error</string>
+    <string name="no_connection_retry">Connection error, try again</string>
     <string name="xml_error">xml error</string>
+    <string name="image_from_article">Article image</string>
+    <string name="error_timeout">Connection time-out</string>
 </resources>

@@ -5,29 +5,37 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import com.squareup.picasso.Picasso
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home.view.*
 import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSHomeFragment.OnListFragmentInteractionListener
-import miji.com.feedfit.fragments.dummy.DummyContent.DummyItem
+import miji.com.feedfit.model.RSS
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
- */
+
 class RSSHomeRecyclerViewAdapter(
-        private val mValues: List<DummyItem>,
+        private val mValues: RealmList<RSS>? = null,
         private val mListener: OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<RSSHomeRecyclerViewAdapter.ViewHolder>() {
-
     private val mOnClickListener: View.OnClickListener
+
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
+            // Notify the active callbacks interface (the activity, if the fragment is attached to  one) that an item has been selected.
+            val item = v.tag as RSS/*
+            val intent = Intent(this@MainActivity, ArticleActivity::class.java)
+            val extras = Bundle()
+
+            extras.putString("RSS_LINK", rssItem.link)
+            extras.putString("RSS_", rssItem.en)
+
+            val rssImage = view.findViewById(R.id.rss_image)
+            intent.putExtras(extras)
+
+            startActivity(intent)*/
             mListener?.onListFragmentInteraction(item)
         }
     }
@@ -39,24 +47,22 @@ class RSSHomeRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mValues[position]
-        holder.mIdView.text = item.id
-        holder.mContentView.text = item.content
-
+        val item = mValues!![position]
+        holder.summaryFeed.text = item?.title
+        holder.imageFeed.setImageBitmap(null)
+        Picasso.get().load(item?.logo).into(holder.imageFeed)
+        holder.itemView.tag = item
         with(holder.mView) {
             tag = item
             setOnClickListener(mOnClickListener)
         }
     }
 
-    override fun getItemCount(): Int = mValues.size
+    override fun getItemCount(): Int = mValues!!.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.item_number
-        val mContentView: TextView = mView.content
+        val imageFeed: ImageView = mView.rss_image
+        val summaryFeed: TextView = mView.rss_title
 
-        override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
-        }
     }
 }

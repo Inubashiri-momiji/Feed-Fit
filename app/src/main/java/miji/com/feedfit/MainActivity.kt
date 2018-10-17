@@ -9,18 +9,21 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.LinearLayout
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import miji.com.feedfit.fragments.PlaceholderFragment
 import miji.com.feedfit.fragments.RSSHomeFragment
-import miji.com.feedfit.fragments.dummy.DummyContent
-import miji.com.feedfit.utilities.WebController
+import miji.com.feedfit.model.RSS
 
 class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteractionListener {
 
 
+
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private lateinit var realm: Realm
+    private var linearLayout: LinearLayout? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +34,10 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         mainViewContainer.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mainViewContainer))
 
+
         Realm.init(this)
         realm = Realm.getDefaultInstance()
         //realm.executeTransaction { realm ->  realm.deleteAll()   }
-        val intent = Intent(applicationContext, WebController::class.java)
-        startService(intent)
     }
 
     override fun onDestroy() {
@@ -100,8 +102,14 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         }
     }
 
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
+    override fun onListFragmentInteraction(item: RSS?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val tag: String = data!!.getStringExtra("TAG")
+        val fragment = supportFragmentManager.findFragmentByTag(tag)
+        fragment?.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 }

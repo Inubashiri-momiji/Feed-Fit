@@ -67,7 +67,6 @@ class XMLParser {  // Para más información: @link:https://developer.android.co
                             else rss.link = text
                             "author" -> if (entry != null) entry.author = text
                             else rss.author = text
-
                         }
                 }
             }
