@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -16,9 +15,10 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home_list.*
-import miji.com.feedfit.R
+import miji.com.feedfit.adapter.RSSHomeFeedsRecyclerViewAdapter
 import miji.com.feedfit.adapter.RSSHomeRecyclerViewAdapter
 import miji.com.feedfit.model.RSS
+import miji.com.feedfit.model.RSSEntry
 import miji.com.feedfit.utilities.WebController
 
 
@@ -116,6 +116,7 @@ class RSSHomeFragment : Fragment() {
 
     interface OnListFragmentInteractionListener {
         fun onListFragmentInteraction(item: RSS?)
+        fun onListFragmentInteraction(item: RSSEntry?)
     }
 
 
@@ -172,4 +173,8 @@ class RSSHomeFragment : Fragment() {
         refreshLayout.isRefreshing = false
     }
 
+    fun swapAdapter(item: RealmList<RSSEntry>) {
+        val adapter = RSSHomeFeedsRecyclerViewAdapter(item, listener)
+        recyclerView.adapter = adapter
+    }
 }

@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import miji.com.feedfit.fragments.PlaceholderFragment
 import miji.com.feedfit.fragments.RSSHomeFragment
 import miji.com.feedfit.model.RSS
+import miji.com.feedfit.model.RSSEntry
 
 class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteractionListener {
 
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private lateinit var realm: Realm
     private var linearLayout: LinearLayout? = null
-
+    private var tag: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,11 +104,16 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onListFragmentInteraction(item: RSS?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val fragment: RSSHomeFragment = supportFragmentManager.findFragmentByTag(tag) as RSSHomeFragment
+        fragment.swapAdapter(item!!.entries)
+    }
+
+    override fun onListFragmentInteraction(item: RSSEntry?) {
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val tag: String = data!!.getStringExtra("TAG")
+        tag = data!!.getStringExtra("TAG")
         val fragment = supportFragmentManager.findFragmentByTag(tag)
         fragment?.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
