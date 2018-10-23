@@ -11,7 +11,7 @@ import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home_feed.view.*
 import miji.com.feedfit.fragments.RSSHomeFragment.OnListFragmentInteractionListener
 import miji.com.feedfit.model.RSS
-
+import  miji.com.feedfit.R
 
 class RSSHomeRecyclerViewAdapter(
         private val mValues: RealmList<RSS>? = null,

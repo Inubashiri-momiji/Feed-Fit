@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import miji.com.feedfit.adapter.RSSHomeRecyclerViewAdapter
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
 import miji.com.feedfit.utilities.WebController
+import  miji.com.feedfit.R
 
 
 /**
@@ -93,27 +95,31 @@ class RSSHomeFragment : Fragment() {
         }
         val pendingResult = activity?.createPendingResult(0, Intent(), 0)
         val intent = Intent(context, WebController::class.java)
+        intent.putExtra("URL", "https://www.reddit.com/r/Granblue_en.rss")
         intent.putExtra(WebController.PENDING_RESULT, pendingResult)
         intent.putExtra("TAG", tag.toString())
         context?.startService(intent)
 
         val pendingResulttest1 = activity?.createPendingResult(0, Intent(), 0)
         val intenttest1 = Intent(context, WebController::class.java)
-        intenttest1.putExtra("URL", "https://www.technologyreview.es/feed.xml")
+        intenttest1.putExtra("URL", "https://www.reddit.com/r/tech/.rss")
+        //intenttest1.putExtra("URL", "https://www.technologyreview.es/feed.xml")
         intenttest1.putExtra(WebController.PENDING_RESULT, pendingResulttest1)
         intenttest1.putExtra("TAG", tag.toString())
         context?.startService(intenttest1)
 
         val pendingResulttest2 = activity?.createPendingResult(0, Intent(), 0)
         val intenttest2 = Intent(context, WebController::class.java)
-        intenttest2.putExtra("URL", "http://rss.cnn.com/rss/cnn_topstories.rss")
+        intenttest2.putExtra("URL", "https://www.reddit.com/r/aww/.rss")
+        //intenttest2.putExtra("URL", "http://rss.cnn.com/rss/cnn_topstories.rss")
         intenttest2.putExtra(WebController.PENDING_RESULT, pendingResulttest2)
         intenttest2.putExtra("TAG", tag.toString())
         context?.startService(intenttest2)
 
         val pendingResulttest3 = activity?.createPendingResult(0, Intent(), 0)
         val intenttest3 = Intent(context, WebController::class.java)
-        intenttest3.putExtra("URL", "https://www.crhoy.com/feed/")
+        intenttest3.putExtra("URL", "https://www.reddit.com/r/history/.rss")
+        //intenttest3.putExtra("URL", "https://www.crhoy.com/feed/")
         intenttest3.putExtra(WebController.PENDING_RESULT, pendingResulttest3)
         intenttest3.putExtra("TAG", tag.toString())
         context?.startService(intenttest3)
@@ -143,7 +149,10 @@ class RSSHomeFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == WebController.FETCH_SUCCESS && data != null) {
             val rss: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
-            val adapter = RSSHomeRecyclerViewAdapter(RealmList(rss), listener)
+            val currentList: RealmList<RSS> = RealmList()
+            feedItems[rss.link!!] = rss
+            feedItems.forEach { s, rss ->  currentList.add(rss)}
+            val adapter = RSSHomeRecyclerViewAdapter(currentList, listener)
 
             recyclerView.adapter = adapter
 

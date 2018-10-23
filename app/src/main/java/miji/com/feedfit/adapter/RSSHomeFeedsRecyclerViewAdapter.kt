@@ -9,6 +9,7 @@ import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home_feed.view.*
 import miji.com.feedfit.fragments.RSSHomeFragment
 import miji.com.feedfit.model.RSSEntry
+import  miji.com.feedfit.R
 
 class RSSHomeFeedsRecyclerViewAdapter(
         private val mValues: RealmList<RSSEntry>? = null,
