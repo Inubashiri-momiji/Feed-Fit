@@ -39,7 +39,7 @@ class RSSHomeFragment : Fragment() {
         var refreshDisplay = true
         var sPref: String? = null
         var snackbar: Snackbar? = null
-
+        val feedItems: HashMap<String, RSS> = HashMap()
         const val ARG_COLUMN_COUNT = "column-count"
 
         @JvmStatic
@@ -97,6 +97,26 @@ class RSSHomeFragment : Fragment() {
         intent.putExtra("TAG", tag.toString())
         context?.startService(intent)
 
+        val pendingResulttest1 = activity?.createPendingResult(0, Intent(), 0)
+        val intenttest1 = Intent(context, WebController::class.java)
+        intenttest1.putExtra("URL", "https://www.technologyreview.es/feed.xml")
+        intenttest1.putExtra(WebController.PENDING_RESULT, pendingResulttest1)
+        intenttest1.putExtra("TAG", tag.toString())
+        context?.startService(intenttest1)
+
+        val pendingResulttest2 = activity?.createPendingResult(0, Intent(), 0)
+        val intenttest2 = Intent(context, WebController::class.java)
+        intenttest2.putExtra("URL", "http://rss.cnn.com/rss/cnn_topstories.rss")
+        intenttest2.putExtra(WebController.PENDING_RESULT, pendingResulttest2)
+        intenttest2.putExtra("TAG", tag.toString())
+        context?.startService(intenttest2)
+
+        val pendingResulttest3 = activity?.createPendingResult(0, Intent(), 0)
+        val intenttest3 = Intent(context, WebController::class.java)
+        intenttest3.putExtra("URL", "https://www.crhoy.com/feed/")
+        intenttest3.putExtra(WebController.PENDING_RESULT, pendingResulttest3)
+        intenttest3.putExtra("TAG", tag.toString())
+        context?.startService(intenttest3)
     }
 
     override fun onAttach(context: Context) {
@@ -132,13 +152,12 @@ class RSSHomeFragment : Fragment() {
             if (snackbar != null) {
                 snackbar!!.dismiss()
             }
+
         } else if (resultCode == WebController.FETCH_TIMEOUT) {
             snackbar = Snackbar.make(view!!.findViewById(R.id.main_content), getString(R.string.error_timeout), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getString(R.string.no_connection_retry)) {
                         scanProgressBar.isIndeterminate = false
                         scanProgressBar.visibility = View.GONE
-                        //val category = if (selectedMenuItem == null) SyncStateContract.Constants.CAT_NEWS else rssCats.get(selectedMenuItem.getItemId())
-                        //getFeedFromCategory(category)
                     }
             snackbar!!.show()
             scanProgressBar.isIndeterminate = false

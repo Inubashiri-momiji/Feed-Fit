@@ -20,8 +20,6 @@ class WebController : IntentService("WebController") {
     private var reply: PendingIntent? = null
     private var tag: String? = null
 
-
-
     override fun onHandleIntent(intent: Intent?) {
         if (REQUEST_QUEUE == null) {
             REQUEST_QUEUE = Volley.newRequestQueue(this)
@@ -29,6 +27,9 @@ class WebController : IntentService("WebController") {
         if (intent != null) {
             reply = intent.getParcelableExtra(PENDING_RESULT)
             tag = intent.getStringExtra("TAG")
+            url = intent.getStringExtra("URL")
+            if (url.isEmpty())
+                url = "https://www.reddit.com/r/Granblue_en.rss"
             REQUEST_QUEUE!!.add(StringRequest(Request.Method.GET, url, onFeedReceived, onErrorResponse)) //método, url, callback, error
         }
     }
@@ -63,7 +64,7 @@ class WebController : IntentService("WebController") {
 
     companion object {
         private var REQUEST_QUEUE: RequestQueue? = null
-        val url = "https://www.reddit.com/r/Granblue_en.rss"
+        var url = "https://www.reddit.com/r/Granblue_en.rss"
         const val FETCH_SUCCESS = 0
         const val FETCH_TIMEOUT = 1
 
