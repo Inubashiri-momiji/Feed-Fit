@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onListFragmentInteraction(item: RSS?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
