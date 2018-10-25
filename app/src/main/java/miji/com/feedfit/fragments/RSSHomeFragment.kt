@@ -16,57 +16,30 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home_list.*
+import miji.com.feedfit.R
 import miji.com.feedfit.adapter.RSSHomeFeedsRecyclerViewAdapter
 import miji.com.feedfit.adapter.RSSHomeRecyclerViewAdapter
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
 import miji.com.feedfit.utilities.WebController
-import  miji.com.feedfit.R
+import java.util.*
 
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [RSSHomeFragment.OnListFragmentInteractionListener] interface.
- */
 class RSSHomeFragment : Fragment() {
-
-    companion object {
-
-        const val WIFI = "Wi-Fi"
-        const val ANY = "Any"
-        const val SO_URL = "https://www.reddit.com/r/Granblue_en.rss"
-        private var wifiConnected = false
-        private var mobileConnected = false
-        var refreshDisplay = true
-        var sPref: String? = null
-        var snackbar: Snackbar? = null
-        val feedItems: HashMap<String, RSS> = HashMap()
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        @JvmStatic
-        fun newInstance(columnCount: Int) =
-                RSSHomeFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt(ARG_COLUMN_COUNT, columnCount)
-                    }
-                }
-    }
 
     private var columnCount = 1
     private var listener: OnListFragmentInteractionListener? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshLayout: SwipeRefreshLayout
-    private val testURL = "https://www.reddit.com/r/Granblue_en.rss"
+    private val testURLs: ArrayList<String> = ArrayList(Arrays.asList( //Reemplazar por los enlaces favoritos
+            "https://www.reddit.com/r/Granblue_en.rss",
+            "https://www.technologyreview.es/feed.xml",
+            "https://www.reddit.com/r/aww/.rss",
+            "https://www.crhoy.com/feed/"))
     private var rss: RealmList<RSS> = RealmList()
+    private val feedItems: HashMap<String, RSS> = HashMap()
+    private var snackbar: Snackbar? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_rss_home_list, container, false)
@@ -91,38 +64,9 @@ class RSSHomeFragment : Fragment() {
             val progressBar = scanProgressBar
             progressBar.isIndeterminate = true
             progressBar.visibility = View.VISIBLE
-            getFeeds(testURL)
+            testURLs.forEach { element -> getFeeds(element, WebController.REQUEST_FAVORITES) }
         }
-        val pendingResult = activity?.createPendingResult(0, Intent(), 0)
-        val intent = Intent(context, WebController::class.java)
-        intent.putExtra("URL", "https://www.reddit.com/r/Granblue_en.rss")
-        intent.putExtra(WebController.PENDING_RESULT, pendingResult)
-        intent.putExtra("TAG", tag.toString())
-        context?.startService(intent)
-
-        val pendingResulttest1 = activity?.createPendingResult(0, Intent(), 0)
-        val intenttest1 = Intent(context, WebController::class.java)
-        intenttest1.putExtra("URL", "https://www.reddit.com/r/tech/.rss")
-        //intenttest1.putExtra("URL", "https://www.technologyreview.es/feed.xml")
-        intenttest1.putExtra(WebController.PENDING_RESULT, pendingResulttest1)
-        intenttest1.putExtra("TAG", tag.toString())
-        context?.startService(intenttest1)
-
-        val pendingResulttest2 = activity?.createPendingResult(0, Intent(), 0)
-        val intenttest2 = Intent(context, WebController::class.java)
-        intenttest2.putExtra("URL", "https://www.reddit.com/r/aww/.rss")
-        //intenttest2.putExtra("URL", "http://rss.cnn.com/rss/cnn_topstories.rss")
-        intenttest2.putExtra(WebController.PENDING_RESULT, pendingResulttest2)
-        intenttest2.putExtra("TAG", tag.toString())
-        context?.startService(intenttest2)
-
-        val pendingResulttest3 = activity?.createPendingResult(0, Intent(), 0)
-        val intenttest3 = Intent(context, WebController::class.java)
-        intenttest3.putExtra("URL", "https://www.reddit.com/r/history/.rss")
-        //intenttest3.putExtra("URL", "https://www.crhoy.com/feed/")
-        intenttest3.putExtra(WebController.PENDING_RESULT, pendingResulttest3)
-        intenttest3.putExtra("TAG", tag.toString())
-        context?.startService(intenttest3)
+        testURLs.forEach { element -> getFeeds(element, WebController.REQUEST_FAVORITES) }
     }
 
     override fun onAttach(context: Context) {
@@ -151,7 +95,7 @@ class RSSHomeFragment : Fragment() {
             val rss: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
             val currentList: RealmList<RSS> = RealmList()
             feedItems[rss.link!!] = rss
-            feedItems.forEach { s, rss ->  currentList.add(rss)}
+            feedItems.forEach { _, item -> currentList.add(item) }
             val adapter = RSSHomeRecyclerViewAdapter(currentList, listener)
 
             recyclerView.adapter = adapter
@@ -177,24 +121,27 @@ class RSSHomeFragment : Fragment() {
 
     /**
      * Obtiene  los feeds resultado del controlador web, requiere de una URL para su funcionamiento
-     * @param category URL to fetch feeds
+     * @param link URL to fetch feeds
+     * @param request request type
      * @see WebController
      */
-    private fun getFeeds(category: String) {
+    private fun getFeeds(link: String, request: String) {
         val connectManager = context!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val isConnected = connectManager.activeNetworkInfo?.isConnected
         val pendingResult = activity?.createPendingResult(0, Intent(), 0)
-        val intent = Intent(context!!.applicationContext, WebController::class.java)
-        intent.putExtra(WebController.url, category)
+        val intent = Intent(context, WebController::class.java)
+        intent.putExtra(WebController.URL, link)
         intent.putExtra(WebController.PENDING_RESULT, pendingResult)
-        activity?.startService(intent)
+        intent.putExtra(WebController.REQUEST_TYPE, request)
+        intent.putExtra(WebController.FRAGMENT_TAG, tag.toString())
+        context?.startService(intent)
         if (!isConnected!!) {
             snackbar = Snackbar.make(view!!.findViewById(R.id.main_content), getString(R.string.no_connection), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getString(R.string.no_connection_retry)) {
                         val progressBar = view!!.findViewById<ProgressBar>(R.id.scanProgressBar)
                         progressBar.isIndeterminate = true
                         progressBar.visibility = View.VISIBLE
-                        getFeeds(category)
+                        getFeeds(link, request)
                     }
             snackbar!!.show()
         }
@@ -205,4 +152,10 @@ class RSSHomeFragment : Fragment() {
         val adapter = RSSHomeFeedsRecyclerViewAdapter(item, listener)
         recyclerView.adapter = adapter
     }
+
+    fun onBackPress(): Boolean {
+        TODO("Implementar la función de atrás")
+        //return false
+    }
+
 }

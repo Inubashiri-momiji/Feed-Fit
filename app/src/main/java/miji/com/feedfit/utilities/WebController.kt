@@ -19,6 +19,7 @@ class WebController : IntentService("WebController") {
     private val parser = XMLParser()
     private var reply: PendingIntent? = null
     private var tag: String? = null
+    private var requestType: String? = null
 
     override fun onHandleIntent(intent: Intent?) {
         if (REQUEST_QUEUE == null) {
@@ -26,11 +27,10 @@ class WebController : IntentService("WebController") {
         }
         if (intent != null) {
             reply = intent.getParcelableExtra(PENDING_RESULT)
-            tag = intent.getStringExtra("TAG")
-            url = intent.getStringExtra("URL")
-            if (url.isEmpty())
-                url = "https://www.reddit.com/r/Granblue_en.rss"
-            REQUEST_QUEUE!!.add(StringRequest(Request.Method.GET, url, onFeedReceived, onErrorResponse)) //método, url, callback, error
+            tag = intent.getStringExtra(FRAGMENT_TAG)
+            requestType = intent.getStringExtra(REQUEST_TYPE)
+            REQUEST_QUEUE!!.add(StringRequest(Request.Method.GET, intent.getStringExtra("URL"),
+                    onFeedReceived, onErrorResponse)) //método, url, callback, error
         }
     }
 
@@ -38,9 +38,8 @@ class WebController : IntentService("WebController") {
         try {
             val rssItems: RSS = parser.parse(String(response.toByteArray(charset("UTF-8"))))
             val result = Intent()
-            result.putExtra("TAG", tag)
+            result.putExtra(FRAGMENT_TAG, tag)
             result.putExtra(PARCELABLE_EXTRAS, rssItems)
-            //result.putExtra("test",5)
             reply?.send(applicationContext, FETCH_SUCCESS, result)
         } catch (e: PendingIntent.CanceledException) {
             Log.e("webController", "onHandleIntent pending intent error", e)
@@ -64,13 +63,17 @@ class WebController : IntentService("WebController") {
 
     companion object {
         private var REQUEST_QUEUE: RequestQueue? = null
-        var url = "https://www.reddit.com/r/Granblue_en.rss"
         const val FETCH_SUCCESS = 0
         const val FETCH_TIMEOUT = 1
 
         //const val CATEGORY = "CATEGORY"
-        val PENDING_RESULT = "RSS_SERVICE_PENDING_RESULT"
+        const val URL = "URL"
+        const val PENDING_RESULT = "RSS_PENDING"
+        const val REQUEST_FAVORITES = "RSS_FAVORITE"
+        const val REQUEST_NEW_CONTENT = "RSS_NEW_CONTENT"
+        const val REQUEST_TYPE = "REQUEST_TYPE"
         const val PARCELABLE_EXTRAS = "PARCELABLE_EXTRAS"
+        const val FRAGMENT_TAG = "TAG"
     }
 
 
