@@ -7,4 +7,7 @@
     <string name="xml_error">xml error</string>
     <string name="image_from_article">Article image</string>
     <string name="error_timeout">Connection time-out</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

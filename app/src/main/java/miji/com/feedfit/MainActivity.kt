@@ -2,14 +2,14 @@ package miji.com.feedfit
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import com.google.android.material.tabs.TabLayout
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import miji.com.feedfit.fragments.PlaceholderFragment
@@ -146,7 +146,8 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onListFragmentInteraction(item: RSSEntry?) {
-
+        val fragment: RSSHomeFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSHomeFragment
+        fragment.showHTML(item?.content!!)
     }
 
 
