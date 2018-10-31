@@ -6,6 +6,7 @@ import io.realm.RealmList
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class RSS(//especifica el autor, si es que tiene
+        var pubdate: String? = null,
         var author: String? = null,//Especifica las entradas del feed, si es que tiene
         var entries: RealmList<RSSEntry> = RealmList(),// especifica el enlace del feed
         var link: String? = null,//Contiene la url del logo origen del feed, si es que tiene
@@ -16,6 +17,7 @@ class RSS(//especifica el autor, si es que tiene
         var title: String? = null) : Parcelable {
 
     constructor(parcel: Parcel) : this() {
+        pubdate = parcel.readString()
         title = parcel.readString()
         subtitle = parcel.readString()
         category = parcel.readString()
@@ -28,6 +30,7 @@ class RSS(//especifica el autor, si es que tiene
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(pubdate)
         parcel.writeString(title)
         parcel.writeString(subtitle)
         parcel.writeString(category)

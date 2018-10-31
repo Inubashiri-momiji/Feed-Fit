@@ -12,7 +12,7 @@ class RSSEntry() : Parcelable {
     var link: String? = null // especifica el enlace del la entrada del feed
     var summary: String? = null  //especifica el resumen de la entrada, si es que tiene
     var category: String? = null  //especifica la categoria a la que pertenece la entrada, si es que tiene
-
+    var enclosure: String? = null  //especifica si hay medios adjuntos a la que pertenece la entrada, si es que tiene
     constructor(parcel: Parcel) : this() {
         title = parcel.readString()
         published = parcel.readString()
@@ -21,6 +21,7 @@ class RSSEntry() : Parcelable {
         link = parcel.readString()
         summary = parcel.readString()
         category = parcel.readString()
+        enclosure = parcel.readString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -31,6 +32,7 @@ class RSSEntry() : Parcelable {
         parcel.writeString(link)
         parcel.writeString(summary)
         parcel.writeString(category)
+        parcel.writeString(enclosure)
     }
 
     override fun describeContents(): Int {

@@ -1,17 +1,17 @@
 package miji.com.feedfit.adapter
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home_feed.view.*
+import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSHomeFragment.OnListFragmentInteractionListener
 import miji.com.feedfit.model.RSS
-import  miji.com.feedfit.R
 
 class RSSHomeRecyclerViewAdapter(
         private val mValues: RealmList<RSS>? = null,
@@ -22,18 +22,7 @@ class RSSHomeRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            // Notify the active callbacks interface (the activity, if the fragment is attached to  one) that an item has been selected.
-            val item = v.tag as RSS/*
-            val intent = Intent(this@MainActivity, ArticleActivity::class.java)
-            val extras = Bundle()
-
-            extras.putString("RSS_LINK", rssItem.link)
-            extras.putString("RSS_", rssItem.en)
-
-            val rssImage = view.findViewById(R.id.rss_image)
-            intent.putExtras(extras)
-
-            startActivity(intent)*/
+            val item = v.tag as RSS
             mListener?.onListFragmentInteraction(item)
         }
     }
