@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginLeft="5dp"
+    android:padding="10dp"
+    android:orientation="horizontal"
+    android:background="@drawable/shadow">
+
+    <Button
+        android:id="@+id/btn_add_favorite"
+        android:layout_width="36dp"
+        android:layout_height="22dp"
+        android:layout_weight="1"
+        android:background="@drawable/ic_favorite_feed_select" />
+
+    <TextView
+        android:id="@+id/rss_title"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?attr/colorPrimaryDark"
+        android:padding="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/feed_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@android:color/background_light"
+            android:fontFamily="sans-serif"
+            android:padding="8dp"
+            android:textSize="16dp"
+            android:textStyle="bold|italic" />
+
+        <!-- TextView
+            android:id="@+id/feed_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@android:color/background_light"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/feed_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:background="@android:color/background_light"
+            android:padding="8dp" /-->
+
+        <TextView
+            android:id="@+id/feed_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:background="@android:color/background_light"
+            android:fontFamily="sans-serif"
+            android:padding="8dp" />
+    </LinearLayout>
+</LinearLayout>
