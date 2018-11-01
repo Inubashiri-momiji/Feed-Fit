@@ -44,7 +44,6 @@ class RSSNewFeedsRecyclerViewAdapter(
         holder.feedTitle.text = item?.title
         holder.feedSummary.text = item?.content
         holder.btnAdd.setOnClickListener {
-            //holder.btnAdd.setBackgroundResource(R.drawable.ic_rss_added)
             if(mLinkCompare?.get(item?.link) != null){
                 favoriteRSSEntry?.add(mLinkCompare.get(item?.link).toString())
                 holder.btnAdd.isClickable = false
