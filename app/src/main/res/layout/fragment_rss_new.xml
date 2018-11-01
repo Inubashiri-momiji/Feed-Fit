@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/rss_image"
+    <ImageView
+        android:id="@+id/rss_image_news"
         android:layout_width="125dp"
         android:layout_height="100dp"
         android:background="@android:color/transparent"
@@ -13,7 +13,7 @@
         android:scaleType="centerCrop" />
 
     <TextView
-        android:id="@+id/rss_title"
+        android:id="@+id/rss_title_news"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

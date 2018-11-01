@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_main.view.*
+import kotlinx.android.synthetic.main.fragment_placeholder.view.*
 import miji.com.feedfit.R
 
 /**
@@ -15,7 +15,7 @@ class PlaceholderFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_main, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_placeholder, container, false)
         rootView.temp_text.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
         return rootView
     }

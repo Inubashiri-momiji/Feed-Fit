@@ -4,18 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import io.realm.RealmList
-import kotlinx.android.synthetic.main.fragment_rss_home_list.*
+import kotlinx.android.synthetic.main.fragment_rss_new_list.*
 import miji.com.feedfit.R
 import miji.com.feedfit.adapter.RSSNewFeedsRecyclerViewAdapter
 import miji.com.feedfit.adapter.RSSNewRecyclerViewAdapter
@@ -23,13 +23,11 @@ import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
 import miji.com.feedfit.utilities.WebController
 import java.util.*
-import java.util.Random
-
 
 class RSSNewFragment : Fragment() {
 
     private var columnCount = 1
-    private var listenerNew: OnListFragmentInteractionListener? = null
+    private var listener: OnListFragmentInteractionListener? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshLayout: SwipeRefreshLayout
     private val testURLs: ArrayList<String> = ArrayList(Arrays.asList( //NEWS
@@ -43,9 +41,7 @@ class RSSNewFragment : Fragment() {
     private val feedItems: HashMap<String, RSS> = HashMap()
     private val feedItemsLinks: HashMap<String, String> = HashMap()
     private var snackbar: Snackbar? = null
-    private var i = 0
     private val random = Random()
-    private var position = 0
     private var rssEntry: RSSEntry? = null
     private val currentListRssEntries: RealmList<RSSEntry> = RealmList()
     private val used: ArrayList<Int>? = null
@@ -58,7 +54,7 @@ class RSSNewFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = RSSNewRecyclerViewAdapter(rss, listenerNew)
+                adapter = RSSNewRecyclerViewAdapter(rss, listener)
             }
         }
         return view
@@ -66,11 +62,11 @@ class RSSNewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = homeRecyclerView
-        refreshLayout = swipeRefreshLayout
+        recyclerView = NewsRecyclerView
+        refreshLayout = swipeRefreshLayoutNews
         recyclerView.layoutManager = LinearLayoutManager(context!!)
         refreshLayout.setOnRefreshListener {
-            val progressBar = scanProgressBar
+            val progressBar = scanProgressBarNews
             progressBar.isIndeterminate = true
             progressBar.visibility = View.VISIBLE
             testURLs.forEach { element -> getFeeds(element, WebController.REQUEST_FAVORITES) }
@@ -81,7 +77,7 @@ class RSSNewFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnListFragmentInteractionListener) {
-            listenerNew = context
+            listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
         }
@@ -89,7 +85,7 @@ class RSSNewFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listenerNew = null
+        listener = null
     }
 
 
@@ -104,20 +100,19 @@ class RSSNewFragment : Fragment() {
             val rss: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
             val currentList: RealmList<RSS> = RealmList()
             feedItems[rss.link!!] = rss
-            feedItems.forEach {i,item -> currentList.add(item) }
-           currentList.forEach {
-                rss ->
-               rssEntry = rss.entries[randomPosition(rss.entries.size)]
-               feedItemsLinks.put(rssEntry!!.link!!,rss.link!!)
+            feedItems.forEach { _, item -> currentList.add(item) }
+           currentList.forEach { item ->
+               rssEntry = item.entries[randomPosition(item.entries.size)]
+               feedItemsLinks[rssEntry!!.link!!] = item.link!!
                currentListRssEntries += rssEntry
             }
 
-            val adapter = RSSNewFeedsRecyclerViewAdapter(currentListRssEntries,feedItemsLinks,listenerNew)
+            val adapter = RSSNewFeedsRecyclerViewAdapter(currentListRssEntries, feedItemsLinks, listener)
 
             recyclerView.adapter = adapter
 
-            scanProgressBar.isIndeterminate = false
-            scanProgressBar.visibility = View.GONE
+            scanProgressBarNews.isIndeterminate = false
+            scanProgressBarNews.visibility = View.GONE
             if (snackbar != null) {
                 snackbar!!.dismiss()
             }
@@ -125,12 +120,12 @@ class RSSNewFragment : Fragment() {
         } else if (resultCode == WebController.FETCH_TIMEOUT) {
             snackbar = Snackbar.make(view!!.findViewById(R.id.main_content), getString(R.string.error_timeout), Snackbar.LENGTH_INDEFINITE)
                     .setAction(getString(R.string.no_connection_retry)) {
-                        scanProgressBar.isIndeterminate = false
-                        scanProgressBar.visibility = View.GONE
+                        scanProgressBarNews.isIndeterminate = false
+                        scanProgressBarNews.visibility = View.GONE
                     }
             snackbar!!.show()
-            scanProgressBar.isIndeterminate = false
-            scanProgressBar.visibility = View.GONE
+            scanProgressBarNews.isIndeterminate = false
+            scanProgressBarNews.visibility = View.GONE
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -165,38 +160,37 @@ class RSSNewFragment : Fragment() {
     }
 
     fun swapAdapter(item: RealmList<RSSEntry>) {
-        val adapter = RSSNewFeedsRecyclerViewAdapter(item, feedItemsLinks, listenerNew)
+        val adapter = RSSNewFeedsRecyclerViewAdapter(item, feedItemsLinks, listener)
         recyclerView.adapter = adapter
     }
 
     fun onBackPress(): Boolean {
-        TODO("Implementar la función de atrás")
-        //return false
+        return false
     }
 
-    fun randomPosition(max: Int): Int {
-        if (used?.size != max) {
-            var num: Int;
-            var repe: Boolean = false;
+    private fun randomPosition(max: Int): Int {
+        return if (used?.size != max) {
+            var num: Int
+            var repe: Boolean
             do {
                 num = random.nextInt(max)+0
                 repe = wasUsed(num)
-            } while (repe != false)
+            } while (repe)
             used?.add(num)
-            return num
+            num
         } else {
-            return 0
+            0
         }
     }
 
-    fun wasUsed(num: Number): Boolean {
-        var repe: Boolean = false
+    private fun wasUsed(num: Number): Boolean {
+        var repe = false
         used?.forEach { i ->
             if (num == used[i]) {
-                repe = true;
+                repe = true
             }
         }
-        return repe;
+        return repe
     }
 
 }

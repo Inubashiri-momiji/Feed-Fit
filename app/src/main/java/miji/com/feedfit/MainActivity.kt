@@ -14,11 +14,12 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import miji.com.feedfit.fragments.PlaceholderFragment
 import miji.com.feedfit.fragments.RSSHomeFragment
+import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
 
 
-class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteractionListener, RSSNewFragment.OnListFragmentInteractionListener {
 
 
 
@@ -103,6 +104,11 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
             return when (position) {
                 0 -> {
                     val fragment: Fragment = RSSHomeFragment()
+                    mPageReferenceMap[position] = fragment
+                    fragment
+                }
+                1 -> {
+                    val fragment: Fragment = RSSNewFragment()
                     mPageReferenceMap[position] = fragment
                     fragment
                 }

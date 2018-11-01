@@ -1,28 +1,18 @@
 package miji.com.feedfit.adapter
 
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.graphics.drawable.Drawable
-import android.support.v7.widget.AlertDialogLayout
-import android.support.v7.widget.RecyclerView
-import android.view.Gravity
+//import kotlinx.android.synthetic.main.fragment_rss_home_feed.view.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
 import io.realm.RealmList
-//import kotlinx.android.synthetic.main.fragment_rss_home_feed.view.*
 import kotlinx.android.synthetic.main.fragment_rss_new_feed.view.*
-import miji.com.feedfit.model.RSSEntry
-import  miji.com.feedfit.R
+import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSNewFragment
-import miji.com.feedfit.model.RSS
+import miji.com.feedfit.model.RSSEntry
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.coroutines.experimental.EmptyCoroutineContext
 
 class RSSNewFeedsRecyclerViewAdapter(
         private val mValues: RealmList<RSSEntry>? = null,
@@ -62,8 +52,8 @@ class RSSNewFeedsRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues!!.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val feedTitle: TextView = mView.feed_title
-        val feedSummary: TextView = mView.feed_summary
+        val feedTitle: TextView = mView.feed_title_news
+        val feedSummary: TextView = mView.feed_summary_news
         val btnAdd: Button =  mView.btn_add_favorite
     }
 }
