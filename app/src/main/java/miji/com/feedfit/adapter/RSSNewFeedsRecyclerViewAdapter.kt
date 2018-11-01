@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_new_feed.view.*
+import kotlinx.android.synthetic.main.fragment_rss_new_list.view.*
 import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSSEntry
 import java.util.*
+import kotlin.collections.HashMap
 
 class RSSNewFeedsRecyclerViewAdapter(
         private val mValues: RealmList<RSSEntry>? = null,
@@ -38,12 +41,13 @@ class RSSNewFeedsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues!![position]
-        holder.feedTitle.text = mValues.size.toString()
+        holder.feedTitle.text = item?.title
         holder.feedSummary.text = item?.content
         holder.btnAdd.setOnClickListener {
-            holder.btnAdd.setBackgroundResource(R.drawable.ic_favorite_feed_selected)
+            //holder.btnAdd.setBackgroundResource(R.drawable.ic_rss_added)
             if(mLinkCompare?.get(item?.link) != null){
-                favoriteRSSEntry?.add(item?.link!!)
+                favoriteRSSEntry?.add(mLinkCompare.get(item?.link).toString())
+                holder.btnAdd.isClickable = false
             }
         }
 
@@ -51,9 +55,11 @@ class RSSNewFeedsRecyclerViewAdapter(
 
     override fun getItemCount(): Int = mValues!!.size
 
+    fun getFavorites(): ArrayList<String>? = favoriteRSSEntry
+
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val feedTitle: TextView = mView.feed_title_news
         val feedSummary: TextView = mView.feed_summary_news
-        val btnAdd: Button =  mView.btn_add_favorite
+        val btnAdd: Button = mView.btn_add_favorite
     }
 }

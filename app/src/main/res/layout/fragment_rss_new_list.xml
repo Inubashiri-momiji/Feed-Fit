@@ -28,15 +28,81 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/NewsRecyclerView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:clipChildren="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:listitem="@layout/fragment_rss_new" />
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/colorButtonNormal"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btn_world"
+                    android:layout_width="57dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:src="@drawable/ic_menu_world" />
+
+                <ImageButton
+                    android:id="@+id/btn_entertainment"
+                    android:layout_width="55dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:src="@drawable/ic_menu_entertaintment" />
+
+                <ImageButton
+                    android:id="@+id/btn_science"
+                    android:layout_width="66dp"
+                    android:layout_height="62dp"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:src="@drawable/ic_menu_science" />
+
+                <ImageButton
+                    android:id="@+id/btn_sports"
+                    android:layout_width="52dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:src="@drawable/ic_menu_sports" />
+
+                <ImageButton
+                    android:id="@+id/btn_technology"
+                    android:layout_width="45dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:src="@drawable/ic_menu_tech" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/category_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="3dp"
+                android:text="World News"
+                android:textSize="24sp"
+                android:textStyle="bold|italic" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/NewsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:clipChildren="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/fragment_rss_new" />
+        </LinearLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

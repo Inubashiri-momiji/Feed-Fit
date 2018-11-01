@@ -7,9 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -18,11 +19,19 @@ import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_new_list.*
 import miji.com.feedfit.R
 import miji.com.feedfit.adapter.RSSNewFeedsRecyclerViewAdapter
-import miji.com.feedfit.adapter.RSSNewRecyclerViewAdapter
+import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.tabs.TabItem
+import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.fragment_rss_new_list.view.*
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
 import miji.com.feedfit.utilities.WebController
+import miji.com.feedfit.adapter.RSSNewRecyclerViewAdapter
 import java.util.*
+import android.R.id.button1
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+
 
 class RSSNewFragment : Fragment() {
 
@@ -30,16 +39,14 @@ class RSSNewFragment : Fragment() {
     private var listener: OnListFragmentInteractionListener? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshLayout: SwipeRefreshLayout
-    private val testURLs: ArrayList<String> = ArrayList(Arrays.asList( //NEWS
+    private var testURLs2: ArrayList<String>  = ArrayList(Arrays.asList( //NEWS
             "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
-            "http://www.washingtonpost.com/rss/",
             "https://www.yahoo.com/news/rss/world",
-            "http://rssfeeds.usatoday.com/usatoday-NewsTopStories",
-            "http://feeds.reuters.com/reuters/topNews",
             "https://www.crhoy.com/feed/"))
     private var rss: RealmList<RSS> = RealmList()
-    private val feedItems: HashMap<String, RSS> = HashMap()
+    private val feedItemsNF: HashMap<String, RSS> = HashMap()
     private val feedItemsLinks: HashMap<String, String> = HashMap()
+    private val categoriesChannels: HashMap<String, ArrayList<String>> = HashMap()
     private var snackbar: Snackbar? = null
     private val random = Random()
     private var rssEntry: RSSEntry? = null
@@ -66,12 +73,13 @@ class RSSNewFragment : Fragment() {
         refreshLayout = swipeRefreshLayoutNews
         recyclerView.layoutManager = LinearLayoutManager(context!!)
         refreshLayout.setOnRefreshListener {
+            selectCategory()
             val progressBar = scanProgressBarNews
             progressBar.isIndeterminate = true
             progressBar.visibility = View.VISIBLE
-            testURLs.forEach { element -> getFeeds(element, WebController.REQUEST_FAVORITES) }
+            testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
-        testURLs.forEach { element -> getFeeds(element, WebController.REQUEST_FAVORITES) }
+        testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
     }
 
     override fun onAttach(context: Context) {
@@ -96,12 +104,13 @@ class RSSNewFragment : Fragment() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == WebController.FETCH_SUCCESS && data != null) {
-            val rss: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
-            val currentList: RealmList<RSS> = RealmList()
-            feedItems[rss.link!!] = rss
-            feedItems.forEach { _, item -> currentList.add(item) }
-           currentList.forEach { item ->
+        if (resultCode == WebController.FETCH_SUCCESS && data != null ) {
+            //&& data.getParcelableExtra(WebController.REQUEST_TYPE) == WebController.REQUEST_NEW_CONTENT
+            val rssNF: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
+            val currentListRss: RealmList<RSS> = RealmList()
+            feedItemsNF[rssNF.link!!] = rssNF
+            feedItemsNF.forEach { _, item -> currentListRss.add(item) }
+           currentListRss.forEach { item ->
                rssEntry = item.entries[randomPosition(item.entries.size)]
                feedItemsLinks[rssEntry!!.link!!] = item.link!!
                currentListRssEntries += rssEntry
@@ -192,5 +201,42 @@ class RSSNewFragment : Fragment() {
         }
         return repe
     }
+
+    private fun hashmapChannels(): HashMap<String, ArrayList<String>> {
+        categoriesChannels.put("World", Arrays.asList( "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml","https://www.yahoo.com/news/rss/world", "https://www.crhoy.com/feed/","https://www.yahoo.com/news/rss/world") as java.util.ArrayList<String>)
+        categoriesChannels.put("Entertainment", Arrays.asList("http://www.npr.org/rss/rss.php?id=1008","http://www.newyorker.com/feed/humor","http://www.npr.org/rss/rss.php?id=13","http://www.npr.org/rss/rss.php?id=1045","https://www.yahoo.com/news/rss/entertainment") as java.util.ArrayList<String>)
+        categoriesChannels.put("Science", Arrays.asList( "http://hosted.ap.org/lineups/SCIENCEHEADS-rss_2.0.xml?SITE=OHLIM&SECTION=HOMEy", "https://www.yahoo.com/news/rss/world", "http://feeds.nature.com/nature/rss/current", "http://www.nasa.gov/rss/image_of_the_day.rss","https://www.yahoo.com/news/rss/science") as java.util.ArrayList<String>)
+        categoriesChannels.put("Sports", Arrays.asList( "http://hosted.ap.org/lineups/SPORTSHEADS-rss_2.0.xml?SITE=VABRM&SECTION=HOME", "http://www.si.com/rss/si_topstories.rss", "http://feeds1.nytimes.com/nyt/rss/Sports", "http://www.nba.com/jazz/rss.xml","https://www.yahoo.com/news/rss/sports") as java.util.ArrayList<String>)
+        categoriesChannels.put("Technology", Arrays.asList("http://feeds.wired.com/wired/index", "http://feeds.nytimes.com/nyt/rss/Technology", "http://www.npr.org/rss/rss.php?id=1019", "http://www.techworld.com/news/rss","https://www.yahoo.com/news/rss/tech") as java.util.ArrayList<String>)
+        return  categoriesChannels
+    }
+
+    private fun selectCategory(){
+        val titleCategory : TextView = view!!.findViewById(R.id.category_title)
+        val selectWorld : ImageButton = view!!.findViewById(R.id.btn_world)
+        val selectEntertainment : ImageButton = view!!.findViewById(R.id.btn_entertainment)
+        val selectScience : ImageButton = view!!.findViewById(R.id.btn_science)
+        val selectSports : ImageButton = view!!.findViewById(R.id.btn_sports)
+        val selectTechnology : ImageButton = view!!.findViewById(R.id.btn_technology)
+
+        selectWorld.setOnClickListener{
+            titleCategory.text = "World News"
+        }
+        selectEntertainment.setOnClickListener{
+            titleCategory.text = "Entertaiment News"
+        }
+        selectScience.setOnClickListener{
+            titleCategory.text = "Science News"
+        }
+        selectSports.setOnClickListener{
+            titleCategory.text = "Sports News"
+        }
+        selectTechnology.setOnClickListener{
+            titleCategory.text = "Techology News"
+        }
+
+    }
+
+
 
 }
