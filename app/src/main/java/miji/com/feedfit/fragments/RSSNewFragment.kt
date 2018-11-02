@@ -29,6 +29,7 @@ import miji.com.feedfit.utilities.WebController
 import miji.com.feedfit.adapter.RSSNewRecyclerViewAdapter
 import java.util.*
 import android.R.id.button1
+import android.graphics.Color
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -39,10 +40,7 @@ class RSSNewFragment : Fragment() {
     private var listener: OnListFragmentInteractionListener? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var refreshLayout: SwipeRefreshLayout
-    private var testURLs2: ArrayList<String>  = ArrayList(Arrays.asList( //NEWS
-            "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
-            "https://www.yahoo.com/news/rss/world",
-            "https://www.crhoy.com/feed/"))
+    private var testURLs2: ArrayList<String> ?= null
     private var rss: RealmList<RSS> = RealmList()
     private val feedItemsNF: HashMap<String, RSS> = HashMap()
     private val feedItemsLinks: HashMap<String, String> = HashMap()
@@ -52,6 +50,7 @@ class RSSNewFragment : Fragment() {
     private var rssEntry: RSSEntry? = null
     private val currentListRssEntries: RealmList<RSSEntry> = RealmList()
     private val used: ArrayList<Int>? = null
+    private var key : String = "World"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_rss_new_list, container, false)
@@ -72,14 +71,15 @@ class RSSNewFragment : Fragment() {
         recyclerView = NewsRecyclerView
         refreshLayout = swipeRefreshLayoutNews
         recyclerView.layoutManager = LinearLayoutManager(context!!)
+        hashmapChannels()
+        testURLs2 = categoriesChannels?.get(selectCategory())
         refreshLayout.setOnRefreshListener {
-            selectCategory()
             val progressBar = scanProgressBarNews
             progressBar.isIndeterminate = true
             progressBar.visibility = View.VISIBLE
             testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
-        testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
+       testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
     }
 
     override fun onAttach(context: Context) {
@@ -202,16 +202,15 @@ class RSSNewFragment : Fragment() {
         return repe
     }
 
-    private fun hashmapChannels(): HashMap<String, ArrayList<String>> {
-        categoriesChannels.put("World", Arrays.asList( "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml","https://www.yahoo.com/news/rss/world", "https://www.crhoy.com/feed/","https://www.yahoo.com/news/rss/world") as java.util.ArrayList<String>)
-        categoriesChannels.put("Entertainment", Arrays.asList("http://www.npr.org/rss/rss.php?id=1008","http://www.newyorker.com/feed/humor","http://www.npr.org/rss/rss.php?id=13","http://www.npr.org/rss/rss.php?id=1045","https://www.yahoo.com/news/rss/entertainment") as java.util.ArrayList<String>)
-        categoriesChannels.put("Science", Arrays.asList( "http://hosted.ap.org/lineups/SCIENCEHEADS-rss_2.0.xml?SITE=OHLIM&SECTION=HOMEy", "https://www.yahoo.com/news/rss/world", "http://feeds.nature.com/nature/rss/current", "http://www.nasa.gov/rss/image_of_the_day.rss","https://www.yahoo.com/news/rss/science") as java.util.ArrayList<String>)
-        categoriesChannels.put("Sports", Arrays.asList( "http://hosted.ap.org/lineups/SPORTSHEADS-rss_2.0.xml?SITE=VABRM&SECTION=HOME", "http://www.si.com/rss/si_topstories.rss", "http://feeds1.nytimes.com/nyt/rss/Sports", "http://www.nba.com/jazz/rss.xml","https://www.yahoo.com/news/rss/sports") as java.util.ArrayList<String>)
-        categoriesChannels.put("Technology", Arrays.asList("http://feeds.wired.com/wired/index", "http://feeds.nytimes.com/nyt/rss/Technology", "http://www.npr.org/rss/rss.php?id=1019", "http://www.techworld.com/news/rss","https://www.yahoo.com/news/rss/tech") as java.util.ArrayList<String>)
-        return  categoriesChannels
+    private fun hashmapChannels(){
+        categoriesChannels.put("Entertainment", ArrayList(Arrays.asList("http://www.npr.org/rss/rss.php?id=1008","http://www.newyorker.com/feed/humor","http://www.npr.org/rss/rss.php?id=13","http://www.npr.org/rss/rss.php?id=1045","https://www.yahoo.com/news/rss/entertainment")))
+        categoriesChannels.put("Science", ArrayList(Arrays.asList( "http://hosted.ap.org/lineups/SCIENCEHEADS-rss_2.0.xml?SITE=OHLIM&SECTION=HOMEy", "https://www.yahoo.com/news/rss/world", "http://feeds.nature.com/nature/rss/current", "http://www.nasa.gov/rss/image_of_the_day.rss","https://www.yahoo.com/news/rss/science")))
+        categoriesChannels.put("Sports", ArrayList(Arrays.asList( "http://hosted.ap.org/lineups/SPORTSHEADS-rss_2.0.xml?SITE=VABRM&SECTION=HOME", "http://www.si.com/rss/si_topstories.rss", "http://feeds1.nytimes.com/nyt/rss/Sports", "http://www.nba.com/jazz/rss.xml","https://www.yahoo.com/news/rss/sports")))
+        categoriesChannels.put("Technology", ArrayList(Arrays.asList("http://feeds.wired.com/wired/index", "http://feeds.nytimes.com/nyt/rss/Technology", "http://www.npr.org/rss/rss.php?id=1019", "http://www.techworld.com/news/rss","https://www.yahoo.com/news/rss/tech")))
+        categoriesChannels.put("World", ArrayList(Arrays.asList( "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml","https://www.yahoo.com/news/rss/world", "https://www.crhoy.com/feed/","https://www.yahoo.com/news/rss/world")))
     }
 
-    private fun selectCategory(){
+    private fun selectCategory(): String {
         val titleCategory : TextView = view!!.findViewById(R.id.category_title)
         val selectWorld : ImageButton = view!!.findViewById(R.id.btn_world)
         val selectEntertainment : ImageButton = view!!.findViewById(R.id.btn_entertainment)
@@ -221,22 +220,26 @@ class RSSNewFragment : Fragment() {
 
         selectWorld.setOnClickListener{
             titleCategory.text = "World News"
+            //selectWorld.setBackgroundColor(Color.GRAY)
+            key = "World"
         }
         selectEntertainment.setOnClickListener{
             titleCategory.text = "Entertaiment News"
+            key = "Entertaiment"
         }
         selectScience.setOnClickListener{
             titleCategory.text = "Science News"
+            key = "Science"
         }
         selectSports.setOnClickListener{
             titleCategory.text = "Sports News"
+            key = "Sports"
         }
         selectTechnology.setOnClickListener{
-            titleCategory.text = "Techology News"
+            titleCategory.text = "Technology News"
+            key = "Technology"
         }
-
+        return key
     }
-
-
 
 }
