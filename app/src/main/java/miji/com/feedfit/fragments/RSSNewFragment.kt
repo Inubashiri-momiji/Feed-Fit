@@ -30,6 +30,7 @@ import miji.com.feedfit.adapter.RSSNewRecyclerViewAdapter
 import java.util.*
 import android.R.id.button1
 import android.graphics.Color
+import android.widget.Button
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -220,23 +221,47 @@ class RSSNewFragment : Fragment() {
 
         selectWorld.setOnClickListener{
             titleCategory.text = "World News"
-            //selectWorld.setBackgroundColor(Color.GRAY)
+            selectWorld.setBackgroundColor(Color.GRAY)
+            selectEntertainment.setBackgroundColor(Color.LTGRAY)
+            selectScience.setBackgroundColor(Color.LTGRAY)
+            selectSports.setBackgroundColor(Color.LTGRAY)
+            selectTechnology.setBackgroundColor(Color.LTGRAY)
             key = "World"
         }
         selectEntertainment.setOnClickListener{
             titleCategory.text = "Entertaiment News"
+            selectWorld.setBackgroundColor(Color.LTGRAY)
+            selectEntertainment.setBackgroundColor(Color.GRAY)
+            selectScience.setBackgroundColor(Color.LTGRAY)
+            selectSports.setBackgroundColor(Color.LTGRAY)
+            selectTechnology.setBackgroundColor(Color.LTGRAY)
             key = "Entertaiment"
         }
         selectScience.setOnClickListener{
             titleCategory.text = "Science News"
+            selectWorld.setBackgroundColor(Color.LTGRAY)
+            selectEntertainment.setBackgroundColor(Color.LTGRAY)
+            selectScience.setBackgroundColor(Color.GRAY)
+            selectSports.setBackgroundColor(Color.LTGRAY)
+            selectTechnology.setBackgroundColor(Color.LTGRAY)
             key = "Science"
         }
         selectSports.setOnClickListener{
             titleCategory.text = "Sports News"
+            selectWorld.setBackgroundColor(Color.LTGRAY)
+            selectEntertainment.setBackgroundColor(Color.LTGRAY)
+            selectScience.setBackgroundColor(Color.LTGRAY)
+            selectSports.setBackgroundColor(Color.GRAY)
+            selectTechnology.setBackgroundColor(Color.LTGRAY)
             key = "Sports"
         }
         selectTechnology.setOnClickListener{
             titleCategory.text = "Technology News"
+            selectWorld.setBackgroundColor(Color.LTGRAY)
+            selectEntertainment.setBackgroundColor(Color.LTGRAY)
+            selectScience.setBackgroundColor(Color.LTGRAY)
+            selectSports.setBackgroundColor(Color.LTGRAY)
+            selectTechnology.setBackgroundColor(Color.GRAY)
             key = "Technology"
         }
         return key
