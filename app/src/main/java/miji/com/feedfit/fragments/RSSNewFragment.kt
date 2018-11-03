@@ -50,6 +50,7 @@ class RSSNewFragment : Fragment() {
     private var snackbar: Snackbar? = null
     private val random = Random()
     private var rssEntry: RSSEntry? = null
+    val currentListRss: RealmList<RSS> = RealmList()
     private val currentListRssEntries: RealmList<RSSEntry> = RealmList()
     private val used: ArrayList<Int>? = null
     private var key : String = "World"
@@ -107,9 +108,10 @@ class RSSNewFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == WebController.FETCH_SUCCESS && data != null ) {
+            feedItemsNF.clear()
+            currentListRss.clear()
             //&& data.getParcelableExtra(WebController.REQUEST_TYPE) == WebController.REQUEST_NEW_CONTENT
             val rssNF: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
-            val currentListRss: RealmList<RSS> = RealmList()
             feedItemsNF[rssNF.link!!] = rssNF
             feedItemsNF.forEach { _, item -> currentListRss.add(item) }
             currentListRss.forEach { item ->
@@ -118,8 +120,9 @@ class RSSNewFragment : Fragment() {
                 currentListRssEntries += rssEntry
             }
 
-            val adapter = RSSNewFeedsRecyclerViewAdapter(currentListRssEntries, feedItemsLinks, listener)
 
+
+            val adapter = RSSNewFeedsRecyclerViewAdapter(currentListRssEntries, feedItemsLinks, listener)
             recyclerView.adapter = adapter
 
             scanProgressBarNews.isIndeterminate = false
@@ -213,6 +216,9 @@ class RSSNewFragment : Fragment() {
     }
 
     private fun selectCategory() {
+        currentListRssEntries.clear()
+        recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(currentListRssEntries, feedItemsLinks, listener)
+        (recyclerView.adapter as RSSNewFeedsRecyclerViewAdapter).notifyDataSetChanged()
         testURLs2 = categoriesChannels["World"]
         val titleCategory : TextView = view!!.findViewById(R.id.category_title)
         val selectWorld : ImageButton = view!!.findViewById(R.id.btn_world)
@@ -238,6 +244,8 @@ class RSSNewFragment : Fragment() {
             selectScience.setBackgroundColor(Color.rgb(224,224,224))
             selectSports.setBackgroundColor(Color.rgb(224,224,224))
             selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(currentListRssEntries, feedItemsLinks, listener)
+            (recyclerView.adapter as RSSNewFeedsRecyclerViewAdapter).notifyDataSetChanged()
             testURLs2 = categoriesChannels["Entertainment"]
             testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }

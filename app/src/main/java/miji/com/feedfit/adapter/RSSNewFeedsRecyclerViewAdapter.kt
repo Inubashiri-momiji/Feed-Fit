@@ -23,7 +23,7 @@ class RSSNewFeedsRecyclerViewAdapter(
         private val mListener: RSSNewFragment.OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<RSSNewFeedsRecyclerViewAdapter.ViewHolder>() {
     private val mOnClickListener: View.OnClickListener
-    private val favoriteRSSEntry: ArrayList<String>? = null
+    private val favoriteRSSEntry: ArrayList<String> ?= null
 
     init {
         mOnClickListener = View.OnClickListener { v ->
@@ -54,7 +54,7 @@ class RSSNewFeedsRecyclerViewAdapter(
 
     override fun getItemCount(): Int = mValues!!.size
 
-    fun getFavorites(): ArrayList<String>? = favoriteRSSEntry
+    fun getFavoritesRss(): ArrayList<String>? = favoriteRSSEntry
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val feedTitle: TextView = mView.feed_title_news

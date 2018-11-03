@@ -23,8 +23,8 @@
             android:layout_weight="1"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextAppearance="@style/toolbar_text"
-            app:title="@string/app_name" />
+            app:title="@string/app_name"
+            app:titleTextAppearance="@style/toolbar_text" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <RelativeLayout

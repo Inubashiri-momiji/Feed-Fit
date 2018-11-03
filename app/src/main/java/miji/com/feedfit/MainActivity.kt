@@ -12,6 +12,8 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_rss_new_list.*
+import miji.com.feedfit.adapter.RSSHomeFeedsRecyclerViewAdapter
 import miji.com.feedfit.fragments.PlaceholderFragment
 import miji.com.feedfit.fragments.RSSHomeFragment
 import miji.com.feedfit.fragments.RSSNewFragment
@@ -102,11 +104,11 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         private var mCurrentFragment: Fragment? = null
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> {
+                /*0 -> {
                     val fragment: Fragment = RSSHomeFragment()
                     mPageReferenceMap[position] = fragment
                     fragment
-                }
+                }*/
                 1 -> {
                     val fragment: Fragment = RSSNewFragment()
                     mPageReferenceMap[position] = fragment
@@ -147,13 +149,15 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onListFragmentInteraction(item: RSS?) {
-        val fragment: RSSHomeFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSHomeFragment
-        fragment.swapAdapter(item!!.entries)
+       /* val fragment: RSSHomeFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSHomeFragment
+        fragment.swapAdapter(item!!.entries)*/
+        val fragment: RSSNewFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSNewFragment
+       // fragment.swapAdapter(item!!.entries)
     }
 
     override fun onListFragmentInteraction(item: RSSEntry?) {
-        val fragment: RSSHomeFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSHomeFragment
-        fragment.showHTML(item?.content!!)
+        val fragment: RSSNewFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSNewFragment
+    //    fragment.showHTML(item?.content!!)
     }
 
 
