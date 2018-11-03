@@ -31,6 +31,7 @@ import java.util.*
 import android.R.id.button1
 import android.graphics.Color
 import android.widget.Button
+import kotlinx.android.synthetic.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -73,14 +74,14 @@ class RSSNewFragment : Fragment() {
         refreshLayout = swipeRefreshLayoutNews
         recyclerView.layoutManager = LinearLayoutManager(context!!)
         hashmapChannels()
-        testURLs2 = categoriesChannels?.get(selectCategory())
+        selectCategory()
         refreshLayout.setOnRefreshListener {
             val progressBar = scanProgressBarNews
             progressBar.isIndeterminate = true
             progressBar.visibility = View.VISIBLE
             testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
-       testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
+        testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
     }
 
     override fun onAttach(context: Context) {
@@ -111,10 +112,10 @@ class RSSNewFragment : Fragment() {
             val currentListRss: RealmList<RSS> = RealmList()
             feedItemsNF[rssNF.link!!] = rssNF
             feedItemsNF.forEach { _, item -> currentListRss.add(item) }
-           currentListRss.forEach { item ->
-               rssEntry = item.entries[randomPosition(item.entries.size)]
-               feedItemsLinks[rssEntry!!.link!!] = item.link!!
-               currentListRssEntries += rssEntry
+            currentListRss.forEach { item ->
+                rssEntry = item.entries[randomPosition(item.entries.size)]
+                feedItemsLinks[rssEntry!!.link!!] = item.link!!
+                currentListRssEntries += rssEntry
             }
 
             val adapter = RSSNewFeedsRecyclerViewAdapter(currentListRssEntries, feedItemsLinks, listener)
@@ -204,14 +205,15 @@ class RSSNewFragment : Fragment() {
     }
 
     private fun hashmapChannels(){
-        categoriesChannels.put("Entertainment", ArrayList(Arrays.asList("http://www.npr.org/rss/rss.php?id=1008","http://www.newyorker.com/feed/humor","http://www.npr.org/rss/rss.php?id=13","http://www.npr.org/rss/rss.php?id=1045","https://www.yahoo.com/news/rss/entertainment")))
-        categoriesChannels.put("Science", ArrayList(Arrays.asList( "http://hosted.ap.org/lineups/SCIENCEHEADS-rss_2.0.xml?SITE=OHLIM&SECTION=HOMEy", "https://www.yahoo.com/news/rss/world", "http://feeds.nature.com/nature/rss/current", "http://www.nasa.gov/rss/image_of_the_day.rss","https://www.yahoo.com/news/rss/science")))
-        categoriesChannels.put("Sports", ArrayList(Arrays.asList( "http://hosted.ap.org/lineups/SPORTSHEADS-rss_2.0.xml?SITE=VABRM&SECTION=HOME", "http://www.si.com/rss/si_topstories.rss", "http://feeds1.nytimes.com/nyt/rss/Sports", "http://www.nba.com/jazz/rss.xml","https://www.yahoo.com/news/rss/sports")))
-        categoriesChannels.put("Technology", ArrayList(Arrays.asList("http://feeds.wired.com/wired/index", "http://feeds.nytimes.com/nyt/rss/Technology", "http://www.npr.org/rss/rss.php?id=1019", "http://www.techworld.com/news/rss","https://www.yahoo.com/news/rss/tech")))
-        categoriesChannels.put("World", ArrayList(Arrays.asList( "http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml","https://www.yahoo.com/news/rss/world", "https://www.crhoy.com/feed/","https://www.yahoo.com/news/rss/world")))
+        categoriesChannels["World"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/World.xml","http://rss.cnn.com/rss/edition_world.rss", "http://feeds.reuters.com/Reuters/worldNews","https://www.hoy.es/rss/2.0/?section=internacional", "http://www.diarioextra.com/Rss/list/2/internacionales", "https://www.20minutos.es/rss/internacional/"))
+        categoriesChannels["Entertainment"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Television.xml","http://rss.cnn.com/rss/edition_entertainment.rss","http://ep00.epimg.net/rss/cultura/television.xml","http://feeds.reuters.com/reuters/entertainment","https://www.hoy.es/rss/2.0/?section=culturas/musica", "https://www.20minutos.es/rss/gente-television/"))
+        categoriesChannels["Science"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Science.xml", "http://rss.cnn.com/rss/edition_space.rss", "http://ep00.epimg.net/rss/elpais/ciencia.xml", "http://feeds.reuters.com/reuters/scienceNews","https://www.hoy.es/rss/2.0/?section=sociedad/ciencia", "https://www.20minutos.es/rss/ciencia/"))
+        categoriesChannels["Sports"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Sports.xml", "http://www.espn.com/espn/rss/news", "http://rss.cnn.com/rss/edition_sport.rss", "https://news.co.cr/sports/feed/","http://feeds.reuters.com/reuters/sportsNews", "https://www.20minutos.es/rss/deportes/"))
+        categoriesChannels["Technology"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml", "http://rss.cnn.com/rss/edition_technology.rss", "http://ep00.epimg.net/rss/tecnologia/portada.xml", "https://news.co.cr/technology/feed/","http://feeds.reuters.com/reuters/technologyNews", "https://www.20minutos.es/rss/tecnologia/"))
     }
 
-    private fun selectCategory(): String {
+    private fun selectCategory() {
+        testURLs2 = categoriesChannels["World"]
         val titleCategory : TextView = view!!.findViewById(R.id.category_title)
         val selectWorld : ImageButton = view!!.findViewById(R.id.btn_world)
         val selectEntertainment : ImageButton = view!!.findViewById(R.id.btn_entertainment)
@@ -221,50 +223,53 @@ class RSSNewFragment : Fragment() {
 
         selectWorld.setOnClickListener{
             titleCategory.text = "World News"
-            selectWorld.setBackgroundColor(Color.GRAY)
-            selectEntertainment.setBackgroundColor(Color.LTGRAY)
-            selectScience.setBackgroundColor(Color.LTGRAY)
-            selectSports.setBackgroundColor(Color.LTGRAY)
-            selectTechnology.setBackgroundColor(Color.LTGRAY)
-            key = "World"
+            selectWorld.setBackgroundColor(Color.rgb(170,170,170))
+            selectEntertainment.setBackgroundColor(Color.rgb(224,224,224))
+            selectScience.setBackgroundColor(Color.rgb(224,224,224))
+            selectSports.setBackgroundColor(Color.rgb(224,224,224))
+            selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            testURLs2 = categoriesChannels["World"]
+            testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectEntertainment.setOnClickListener{
-            titleCategory.text = "Entertaiment News"
-            selectWorld.setBackgroundColor(Color.LTGRAY)
-            selectEntertainment.setBackgroundColor(Color.GRAY)
-            selectScience.setBackgroundColor(Color.LTGRAY)
-            selectSports.setBackgroundColor(Color.LTGRAY)
-            selectTechnology.setBackgroundColor(Color.LTGRAY)
-            key = "Entertaiment"
+            titleCategory.text = "Entertainment News"
+            selectWorld.setBackgroundColor(Color.rgb(224,224,224))
+            selectEntertainment.setBackgroundColor(Color.rgb(170,170,170))
+            selectScience.setBackgroundColor(Color.rgb(224,224,224))
+            selectSports.setBackgroundColor(Color.rgb(224,224,224))
+            selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            testURLs2 = categoriesChannels["Entertainment"]
+            testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectScience.setOnClickListener{
             titleCategory.text = "Science News"
-            selectWorld.setBackgroundColor(Color.LTGRAY)
-            selectEntertainment.setBackgroundColor(Color.LTGRAY)
-            selectScience.setBackgroundColor(Color.GRAY)
-            selectSports.setBackgroundColor(Color.LTGRAY)
-            selectTechnology.setBackgroundColor(Color.LTGRAY)
-            key = "Science"
+            selectWorld.setBackgroundColor(Color.rgb(224,224,224))
+            selectEntertainment.setBackgroundColor(Color.rgb(224,224,224))
+            selectScience.setBackgroundColor(Color.rgb(170,170,170))
+            selectSports.setBackgroundColor(Color.rgb(224,224,224))
+            selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            testURLs2 = categoriesChannels["Science"]
+            testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
-        selectSports.setOnClickListener{
+        selectSports.setOnClickListener {
             titleCategory.text = "Sports News"
-            selectWorld.setBackgroundColor(Color.LTGRAY)
-            selectEntertainment.setBackgroundColor(Color.LTGRAY)
-            selectScience.setBackgroundColor(Color.LTGRAY)
-            selectSports.setBackgroundColor(Color.GRAY)
-            selectTechnology.setBackgroundColor(Color.LTGRAY)
-            key = "Sports"
+            selectWorld.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectEntertainment.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectScience.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectSports.setBackgroundColor(Color.rgb(170, 170, 170))
+            selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
+            testURLs2 = categoriesChannels["Sports"]
+            testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectTechnology.setOnClickListener{
             titleCategory.text = "Technology News"
-            selectWorld.setBackgroundColor(Color.LTGRAY)
-            selectEntertainment.setBackgroundColor(Color.LTGRAY)
-            selectScience.setBackgroundColor(Color.LTGRAY)
-            selectSports.setBackgroundColor(Color.LTGRAY)
-            selectTechnology.setBackgroundColor(Color.GRAY)
-            key = "Technology"
+            selectWorld.setBackgroundColor(Color.rgb(224,224,224))
+            selectEntertainment.setBackgroundColor(Color.rgb(224,224,224))
+            selectScience.setBackgroundColor(Color.rgb(224,224,224))
+            selectSports.setBackgroundColor(Color.rgb(224,224,224))
+            selectTechnology.setBackgroundColor(Color.rgb(170,170,170))
+            testURLs2 = categoriesChannels["Technology"]
+            testURLs2!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
-        return key
     }
-
 }
