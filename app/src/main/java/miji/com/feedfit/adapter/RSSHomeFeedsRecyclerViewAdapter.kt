@@ -19,18 +19,7 @@ class RSSHomeFeedsRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            // Notify the active callbacks interface (the activity, if the fragment is attached to  one) that an item has been selected.
-            val item = v.tag as RSSEntry/*
-            val intent = Intent(this@MainActivity, ArticleActivity::class.java)
-            val extras = Bundle()
-
-            extras.putString("RSS_LINK", rssItem.link)
-            extras.putString("RSS_", rssItem.en)
-
-            val rssImage = view.findViewById(R.id.rss_image)
-            intent.putExtras(extras)
-
-            startActivity(intent)*/
+            val item = v.tag as RSSEntry
             mListener?.onListFragmentInteraction(item)
         }
     }

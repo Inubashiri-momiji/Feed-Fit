@@ -30,14 +30,6 @@
             android:name=".utilities.WebController"
             android:exported="false" />
 
-        <activity
-            android:name=".menu_lateral"
-            android:label="@string/title_activity_menu_lateral"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="miji.com.feedfit.MainActivity" />
-        </activity>
     </application>
 
 </manifest>

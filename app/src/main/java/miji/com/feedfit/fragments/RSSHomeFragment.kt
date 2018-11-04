@@ -91,8 +91,9 @@ class RSSHomeFragment : Fragment() {
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == WebController.FETCH_SUCCESS && data != null) {
+    fun onActivityResultHome(resultCode: Int, data: Intent?) {
+        if (resultCode == WebController.FETCH_SUCCESS && data != null
+                && data.getStringExtra(WebController.REQUEST_TYPE) == WebController.REQUEST_FAVORITES) {
             val rss: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
             val currentList: RealmList<RSS> = RealmList()
             feedItems[rss.link!!] = rss
@@ -117,7 +118,6 @@ class RSSHomeFragment : Fragment() {
             scanProgressBar.isIndeterminate = false
             scanProgressBar.visibility = View.GONE
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     /**

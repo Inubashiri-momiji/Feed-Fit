@@ -21,4 +21,15 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="world_feeds">World feeds</string>
+    <string name="entertainment_feeds">Entertainment Feeds</string>
+    <string name="science_feeds">Science feeds</string>
+    <string name="sports_feeds">Sports Feeds</string>
+    <string name="technology_feeds">Technology feeds</string>
+    <string name="world_news">World News</string>
+    <string name="news_world">World News</string>
+    <string name="news_entertainment">Entertainment News</string>
+    <string name="news_Science">Science News</string>
+    <string name="news_Sports">Sports News</string>
+    <string name="news_technology">Technology News</string>
 </resources>

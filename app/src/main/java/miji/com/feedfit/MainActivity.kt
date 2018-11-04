@@ -12,23 +12,19 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_rss_new_list.*
-import miji.com.feedfit.adapter.RSSHomeFeedsRecyclerViewAdapter
 import miji.com.feedfit.fragments.PlaceholderFragment
 import miji.com.feedfit.fragments.RSSHomeFragment
 import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
+import miji.com.feedfit.utilities.WebController
 
 
 class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteractionListener, RSSNewFragment.OnListFragmentInteractionListener {
 
-
-
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private lateinit var realm: Realm
-    private var tagFragmentHome: String = ""
-    private var tagFragmentNewContent: String = ""
+    private var tagFragment: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,9 +78,6 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
         if (id == R.id.action_settings) {
@@ -104,11 +97,11 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         private var mCurrentFragment: Fragment? = null
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                /*0 -> {
+                0 -> {
                     val fragment: Fragment = RSSHomeFragment()
                     mPageReferenceMap[position] = fragment
                     fragment
-                }*/
+                }
                 1 -> {
                     val fragment: Fragment = RSSNewFragment()
                     mPageReferenceMap[position] = fragment
@@ -122,9 +115,9 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
             }
         }
 
-        fun getFragment(key: Int): Fragment? {
+        /*fun getFragment(key: Int): Fragment? {
             return mPageReferenceMap[key]
-        }
+        }*/
 
         fun getCurrentFragment(): Fragment? {
             return mCurrentFragment
@@ -136,7 +129,6 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         }
 
         override fun getCount(): Int {
-            // Show 3 total pages.
             return 3
         }
 
@@ -149,22 +141,41 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onListFragmentInteraction(item: RSS?) {
-       /* val fragment: RSSHomeFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSHomeFragment
-        fragment.swapAdapter(item!!.entries)*/
-        val fragment: RSSNewFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSNewFragment
-       // fragment.swapAdapter(item!!.entries)
+        val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
+        if (fragment is RSSHomeFragment) {
+            fragment.swapAdapter(item!!.entries)
+        } else {
+            if (fragment is RSSNewFragment) {
+                fragment.swapAdapter(item!!.entries)
+            }
+        }
     }
 
     override fun onListFragmentInteraction(item: RSSEntry?) {
-        val fragment: RSSNewFragment = supportFragmentManager.findFragmentByTag(tagFragmentHome) as RSSNewFragment
-    //    fragment.showHTML(item?.content!!)
+        val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
+        if (fragment is RSSHomeFragment) {
+            fragment.showHTML(item?.content!!)
+        }/*else {
+            if (fragment is RSSNewFragment){
+                fragment.showHTML(item?.content!!)
+            }
+        }*/
     }
 
+    override fun onListFragmentInteraction(item: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        tagFragmentHome = data!!.getStringExtra("TAG")
-        val fragment = supportFragmentManager.findFragmentByTag(tagFragmentHome)
-        fragment?.onActivityResult(requestCode, resultCode, data)
+        tagFragment = data!!.getStringExtra(WebController.FRAGMENT_TAG)
+        val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
+        if (fragment is RSSHomeFragment) {
+            fragment.onActivityResultHome(resultCode, data)
+        }
+        if (fragment is RSSNewFragment) {
+            fragment.onActivityResultNew(resultCode, data)
+        }
+
         super.onActivityResult(requestCode, resultCode, data)
     }
 }

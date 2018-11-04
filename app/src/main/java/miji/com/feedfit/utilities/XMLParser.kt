@@ -8,14 +8,11 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.regex.Pattern
 
-class XMLParser {  // Para más información: @link:https://developer.android.com/training/basics/network-ops/xml#kotlin
+class XMLParser {  //  more information at @link:https://developer.android.com/training/basics/network-ops/xml#kotlin
 
-    private var regexPattern: Pattern = Pattern.compile("/(\\d{6,10})/")
-    private var dateFormat: SimpleDateFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm", Locale.getDefault())
+    //private var regexPattern: Pattern = Pattern.compile("/(\\d{6,10})/")
+    //private var dateFormat: SimpleDateFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm", Locale.getDefault())
 
     @Throws(XmlPullParserException::class, IOException::class)
     fun parse(stream: String): RSS { //Genera el parsing del XML mediante el uso de XMLpullParser
@@ -52,8 +49,14 @@ class XMLParser {  // Para más información: @link:https://developer.android.co
                         when (tagName) { //Al llegar al final del documento, se genera el objeto resultado del parsing
 
                             //Feed
-                            "item" -> rss.entries.add(entry!!) //RSS 2.0
-                            "entry" -> rss.entries.add(entry!!) //Atom 1.0
+                            "item" -> {
+                                entry?.parentLink = rss.link
+                                rss.entries.add(entry!!)
+                            }//RSS 2.0
+                            "entry" -> {
+                                entry?.parentLink = rss.link
+                                rss.entries.add(entry!!) //Atom 1.0
+                            }
                             "icon" -> rss.icon = text //Atom 1.0 favicon
                             "logo" -> rss.logo = text //Atom 1.0
                             "image" -> rss.logo = text //RSS 2.0

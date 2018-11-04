@@ -16,7 +16,7 @@
         android:indeterminate="true"
         android:padding="0dp"
         app:elevation="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
+        app:layout_constraintTop_toBottomOf="@id/news_constraint_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -46,6 +46,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/materialGrey"
+                    android:contentDescription="@string/world_feeds"
                     android:src="@drawable/ic_menu_world" />
 
                 <ImageButton
@@ -54,7 +55,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/materialGrey"
-                    android:src="@drawable/ic_menu_entertaintment" />
+                    android:contentDescription="@string/entertainment_feeds"
+                    android:src="@drawable/ic_menu_entertainment" />
 
                 <ImageButton
                     android:id="@+id/btn_science"
@@ -62,6 +64,7 @@
                     android:layout_height="62dp"
                     android:layout_weight="1"
                     android:background="@color/materialGrey"
+                    android:contentDescription="@string/science_feeds"
                     android:src="@drawable/ic_menu_science" />
 
                 <ImageButton
@@ -70,6 +73,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/materialGrey"
+                    android:contentDescription="@string/sports_feeds"
                     android:src="@drawable/ic_menu_sports" />
 
                 <ImageButton
@@ -78,6 +82,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/materialGrey"
+                    android:contentDescription="@string/technology_feeds"
                     android:src="@drawable/ic_menu_tech" />
 
             </LinearLayout>
@@ -86,10 +91,10 @@
                 android:id="@+id/category_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
+                android:layout_marginStart="6dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="3dp"
-                android:text="World News"
+                android:text="@string/world_news"
                 android:textSize="24sp"
                 android:textStyle="bold|italic" />
 
