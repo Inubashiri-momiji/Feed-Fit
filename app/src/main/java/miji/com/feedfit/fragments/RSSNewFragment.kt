@@ -216,35 +216,52 @@ class RSSNewFragment : Fragment() {
                 "http://feeds.reuters.com/Reuters/worldNews",
                 "https://www.hoy.es/rss/2.0/?section=internacional",
                 "http://www.diarioextra.com/Rss/list/2/internacionales",
-                "https://www.20minutos.es/rss/internacional/"
+                "https://www.20minutos.es/rss/internacional/",
+                "http://feeds.skynews.com/feeds/rss/world.xml",
+                "https://www.clarin.com/rss/mundo/",
+                "https://www.economist.com/international/rss.xml",
+                "https://www.cnbc.com/id/100727362/device/rss/rss.html"
         ))
         categoriesChannels["Entertainment"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Television.xml",
                 "http://rss.cnn.com/rss/edition_entertainment.rss",
                 "http://ep00.epimg.net/rss/cultura/television.xml",
                 "http://feeds.reuters.com/reuters/entertainment",
                 "https://www.hoy.es/rss/2.0/?section=culturas/musica",
-                "https://www.20minutos.es/rss/gente-television/"
+                "https://www.20minutos.es/rss/gente-television/",
+                "https://www.clarin.com/rss/espectaculos/cine/",
+                "https://www.clarin.com/rss/eespectaculos/musica/",
+                "https://www.clarin.com/rss/espectaculos/teatro/",
+                "https://www.clarin.com/rss/espectaculos/","http://feeds.skynews.com/feeds/rss/entertainment.xml"
         ))
         categoriesChannels["Science"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Science.xml",
                 "http://rss.cnn.com/rss/edition_space.rss",
                 "http://ep00.epimg.net/rss/elpais/ciencia.xml",
                 "http://feeds.reuters.com/reuters/scienceNews",
                 "https://www.hoy.es/rss/2.0/?section=sociedad/ciencia",
-                "https://www.20minutos.es/rss/ciencia/"
+                "https://www.20minutos.es/rss/ciencia/",
+                "https://www.nasa.gov/rss/dyn/shuttle_station.rss",
+                "https://www.nasa.gov/rss/dyn/solar_system.rss",
+                "https://www.nasa.gov/rss/dyn/earth.rss",
+                "https://www.nasa.gov/rss/dyn/breaking_news.rss"
         ))
         categoriesChannels["Sports"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Sports.xml",
                 "http://www.espn.com/espn/rss/news",
                 "http://rss.cnn.com/rss/edition_sport.rss",
                 "https://news.co.cr/sports/feed/",
                 "http://feeds.reuters.com/reuters/sportsNews",
-                "https://www.20minutos.es/rss/deportes/"
+                "https://www.20minutos.es/rss/deportes/",
+                "https://www.clarin.com/rss/deportes/futbol/",
+                "https://www.clarin.com/rss/deportes/futbol-internacional/"
         ))
         categoriesChannels["Technology"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
                 "http://rss.cnn.com/rss/edition_technology.rss",
                 "http://ep00.epimg.net/rss/tecnologia/portada.xml",
                 "https://news.co.cr/technology/feed/",
                 "http://feeds.reuters.com/reuters/technologyNews",
-                "https://www.20minutos.es/rss/tecnologia/"
+                "https://www.20minutos.es/rss/tecnologia/","https://www.clarin.com/rss/tecnologia/",
+                "http://feeds.skynews.com/feeds/rss/technology.xml",
+                "https://www.economist.com/science-and-technology/rss.xml",
+                "https://www.cnbc.com/id/19854910/device/rss/rss.html"
         ))
     }
 
