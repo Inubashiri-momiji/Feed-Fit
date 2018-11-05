@@ -151,40 +151,40 @@ class RSSNewFragment : Fragment() {
         recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
         (recyclerView.adapter as RSSNewFeedsRecyclerViewAdapter).notifyDataSetChanged()
         channels.clear()
-        val titleCategory : TextView = view!!.findViewById(R.id.category_title)
-        val selectWorld : ImageButton = view!!.findViewById(R.id.btn_world)
-        val selectEntertainment : ImageButton = view!!.findViewById(R.id.btn_entertainment)
-        val selectScience : ImageButton = view!!.findViewById(R.id.btn_science)
-        val selectSports : ImageButton = view!!.findViewById(R.id.btn_sports)
-        val selectTechnology : ImageButton = view!!.findViewById(R.id.btn_technology)
+        val titleCategory: TextView = view!!.findViewById(R.id.category_title)
+        val selectWorld: ImageButton = view!!.findViewById(R.id.btn_world)
+        val selectEntertainment: ImageButton = view!!.findViewById(R.id.btn_entertainment)
+        val selectScience: ImageButton = view!!.findViewById(R.id.btn_science)
+        val selectSports: ImageButton = view!!.findViewById(R.id.btn_sports)
+        val selectTechnology: ImageButton = view!!.findViewById(R.id.btn_technology)
 
-        selectWorld.setOnClickListener{
+        selectWorld.setOnClickListener {
             titleCategory.text = getString(R.string.news_world)
-            selectWorld.setBackgroundColor(Color.rgb(170,170,170))
-            selectEntertainment.setBackgroundColor(Color.rgb(224,224,224))
-            selectScience.setBackgroundColor(Color.rgb(224,224,224))
-            selectSports.setBackgroundColor(Color.rgb(224,224,224))
-            selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            selectWorld.setBackgroundColor(Color.rgb(170, 170, 170))
+            selectEntertainment.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectScience.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectSports.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
             channels.clear()
             categoriesChannels["World"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
-        selectEntertainment.setOnClickListener{
+        selectEntertainment.setOnClickListener {
             titleCategory.text = getString(R.string.news_entertainment)
-            selectWorld.setBackgroundColor(Color.rgb(224,224,224))
-            selectEntertainment.setBackgroundColor(Color.rgb(170,170,170))
-            selectScience.setBackgroundColor(Color.rgb(224,224,224))
-            selectSports.setBackgroundColor(Color.rgb(224,224,224))
-            selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            selectWorld.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectEntertainment.setBackgroundColor(Color.rgb(170, 170, 170))
+            selectScience.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectSports.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
             channels.clear()
             categoriesChannels["Entertainment"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
-        selectScience.setOnClickListener{
+        selectScience.setOnClickListener {
             titleCategory.text = getString(R.string.news_Science)
-            selectWorld.setBackgroundColor(Color.rgb(224,224,224))
-            selectEntertainment.setBackgroundColor(Color.rgb(224,224,224))
-            selectScience.setBackgroundColor(Color.rgb(170,170,170))
-            selectSports.setBackgroundColor(Color.rgb(224,224,224))
-            selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            selectWorld.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectEntertainment.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectScience.setBackgroundColor(Color.rgb(170, 170, 170))
+            selectSports.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
             channels.clear()
             categoriesChannels["Science"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
@@ -198,13 +198,13 @@ class RSSNewFragment : Fragment() {
             channels.clear()
             categoriesChannels["Sports"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
-        selectTechnology.setOnClickListener{
+        selectTechnology.setOnClickListener {
             titleCategory.text = getString(R.string.news_technology)
-            selectWorld.setBackgroundColor(Color.rgb(224,224,224))
-            selectEntertainment.setBackgroundColor(Color.rgb(224,224,224))
-            selectScience.setBackgroundColor(Color.rgb(224,224,224))
-            selectSports.setBackgroundColor(Color.rgb(224,224,224))
-            selectTechnology.setBackgroundColor(Color.rgb(170,170,170))
+            selectWorld.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectEntertainment.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectScience.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectSports.setBackgroundColor(Color.rgb(224, 224, 224))
+            selectTechnology.setBackgroundColor(Color.rgb(170, 170, 170))
             channels.clear()
             categoriesChannels["Technology"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }

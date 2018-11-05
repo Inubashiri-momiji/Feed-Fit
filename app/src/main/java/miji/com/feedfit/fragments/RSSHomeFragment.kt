@@ -27,12 +27,6 @@ class RSSHomeFragment : Fragment() {
     private var columnCount = 1
     private var listener: OnListFragmentInteractionListener? = null
     private lateinit var recyclerView: RecyclerView
-    //private lateinit var refreshLayout: SwipeRefreshLayout
-    /*private val testURLs: ArrayList<String> = ArrayList(Arrays.asList(
-            "https://www.reddit.com/r/Granblue_en.rss",
-            "https://www.technologyreview.es/feed.xml",
-            "https://www.reddit.com/r/aww/.rss",
-            "https://www.crhoy.com/feed/"))*/
     private var rss: RealmList<RSS> = RealmList()
     private lateinit var realm: Realm
 
@@ -55,19 +49,8 @@ class RSSHomeFragment : Fragment() {
         if (realm.isClosed)
             realm = Realm.getDefaultInstance()
         recyclerView = homeRecyclerView
-        //refreshLayout = swipeRefreshLayout
         recyclerView.layoutManager = LinearLayoutManager(context!!)
-        /*refreshLayout.setOnRefreshListener {
-            val progressBar = scanProgressBar
-            progressBar.isIndeterminate = true
-            progressBar.visibility = View.VISIBLE
-            //testURLs.forEach { element -> getFeeds(element, WebController.REQUEST_FAVORITES) }
-        }*/
-
         loadContent()
-
-
-        //testURLs.forEach { element -> getFeeds(element, WebController.REQUEST_FAVORITES) }
     }
 
     override fun onAttach(context: Context) {
@@ -98,12 +81,8 @@ class RSSHomeFragment : Fragment() {
         val data = realm.copyFromRealm(realm.where<RSS>().findAll())
         val test: RealmList<RSS> = RealmList()
         test.addAll(data.subList(0, data.size))
-        //feedItems.forEach { _, item -> data.add(item) }
-
         val adapter = RSSHomeRecyclerViewAdapter(test, listener)
         recyclerView.adapter = adapter
-        // scanProgressBar.isIndeterminate = false
-        //scanProgressBar.visibility = View.GONE
 
     }
 

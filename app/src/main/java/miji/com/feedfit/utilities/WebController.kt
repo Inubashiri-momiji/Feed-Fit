@@ -72,7 +72,6 @@ class WebController : IntentService("WebController") {
         //const val CATEGORY = "CATEGORY"
         const val URL = "URL"
         const val PENDING_RESULT = "RSS_PENDING"
-        const val REQUEST_FAVORITES = "RSS_FAVORITE"
         const val REQUEST_NEW_CONTENT = "RSS_NEW_CONTENT"
         const val REQUEST_TYPE = "REQUEST_TYPE"
         const val PARCELABLE_EXTRAS = "PARCELABLE_EXTRAS"
