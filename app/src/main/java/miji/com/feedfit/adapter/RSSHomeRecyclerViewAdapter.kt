@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home.view.*
+import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSHomeFragment.OnListFragmentInteractionListener
 import miji.com.feedfit.model.RSS
 
@@ -37,7 +38,12 @@ class RSSHomeRecyclerViewAdapter(
         val item = mValues!![position]
         holder.summaryFeed.text = item?.title
         holder.imageFeed.setImageBitmap(null)
-        Picasso.get().load(item?.logo).into(holder.imageFeed)
+        if (item!!.link!!.isEmpty()) {
+            Picasso.get().load(item.logo).into(holder.imageFeed)
+        } else {
+            Picasso.get().load("https://image.flaticon.com/icons/png/128/9/9550.png").into(holder.imageFeed)
+        }
+
         holder.itemView.tag = item
         with(holder.mView) {
             tag = item

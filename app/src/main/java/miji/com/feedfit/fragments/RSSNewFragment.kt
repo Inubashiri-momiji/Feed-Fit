@@ -13,12 +13,14 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_new_list.*
+import miji.com.feedfit.R
 import miji.com.feedfit.adapter.RSSNewFeedsRecyclerViewAdapter
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
@@ -143,10 +145,6 @@ class RSSNewFragment : Fragment() {
         refreshLayout.isRefreshing = false
     }
 
-    fun swapAdapter(item: RealmList<RSSEntry>) {
-        val adapter = RSSNewFeedsRecyclerViewAdapter(item, channels, listener)
-        recyclerView.adapter = adapter
-    }
 
     private fun selectCategory() {
         feedEntriesList.clear()
@@ -252,7 +250,7 @@ class RSSNewFragment : Fragment() {
 
     interface OnListFragmentInteractionListener {
         fun onListFragmentInteraction(item: RSS?)
-        fun onListFragmentInteraction(item: RSSEntry?)
+        fun onListFragmentInteraction(item: RSSEntry?, index: Int)
         fun onListFragmentInteraction(item: String?)
     }
 
@@ -264,5 +262,9 @@ class RSSNewFragment : Fragment() {
         trans.addToBackStack(null)
 
         trans.commit()
+    }
+
+    companion object {
+        const val FRAGMENTID = 0
     }
 }

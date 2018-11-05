@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home_feed.view.*
+import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSHomeFragment
 import miji.com.feedfit.model.RSSEntry
 import miji.com.feedfit.utilities.HTMLParser
@@ -23,7 +24,7 @@ class RSSHomeFeedsRecyclerViewAdapter(
     init {
         mOnClickListener = View.OnClickListener { v ->
             val item = v.tag as RSSEntry
-            mListener?.onListFragmentInteraction(item)
+            mListener?.onListFragmentInteraction(item, RSSHomeFragment.FRAGMENTID)
         }
     }
 

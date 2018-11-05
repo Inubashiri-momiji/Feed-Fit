@@ -73,22 +73,17 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onBackPressed() {
-        val callResult: Boolean
         val fragment = mSectionsPagerAdapter?.getCurrentFragment()
-        if (fragment is RSSHomeFragment) {
-            callResult = (fragment as? RSSHomeFragment)?.onBackPress()!!
-            if (!callResult) {
-                super.onBackPressed()
-            }
-        } else if (fragment is RSSNewFragment) {
+        if (fragment is RSSNewFragment) {
             if (fragment.isHtmlOpen) {
                 fragment.isHtmlOpen = false
-                super.onBackPressed()
-            } else {
-                mainViewContainer.currentItem = 0
             }
-        } else {
-            mainViewContainer.currentItem = 0
+            super.onBackPressed()
+        } else if (fragment is RSSHomeFragment) {
+            when ((fragment as? RSSHomeFragment)?.onBackPress()!!) {
+                RSSHomeFragment.CLOSE_HTML -> super.onBackPressed()
+                RSSHomeFragment.RETURN_FIRST_SCREEN -> mainViewContainer.currentItem = RSSNewFragment.FRAGMENTID
+            }
         }
     }
 
@@ -112,7 +107,7 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         private var mCurrentFragment: Fragment? = null
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> {
+                RSSHomeFragment.FRAGMENTID -> {
                     val fragment: Fragment = RSSHomeFragment()
                     mPageReferenceMap[position] = fragment
                     fragment
@@ -126,9 +121,9 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
             }
         }
 
-        /*fun getFragment(key: Int): Fragment? {
+        fun getFragment(key: Int): Fragment? {
             return mPageReferenceMap[key]
-        }*/
+        }
 
         fun getCurrentFragment(): Fragment? {
             return mCurrentFragment
@@ -152,18 +147,14 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onListFragmentInteraction(item: RSS?) {
-        val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSHomeFragment.FRAGMENTID)!!
         if (fragment is RSSHomeFragment) {
             fragment.swapAdapter(item!!.entries)
-        } else {
-            if (fragment is RSSNewFragment) {
-                fragment.swapAdapter(item!!.entries)
-            }
         }
     }
 
-    override fun onListFragmentInteraction(item: RSSEntry?) {
-        val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
+    override fun onListFragmentInteraction(item: RSSEntry?, index: Int) {
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(index)!!
         if (fragment is RSSHomeFragment) {
             fragment.showHTML(item?.content!!)
         } else {
