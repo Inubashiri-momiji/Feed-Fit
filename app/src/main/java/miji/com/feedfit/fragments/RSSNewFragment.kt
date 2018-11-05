@@ -38,6 +38,7 @@ class RSSNewFragment : Fragment() {
     private var snackbar: Snackbar? = null
     private var currentChannel: String = "World"
     private val categoriesChannels: HashMap<String, ArrayList<String>> = HashMap()
+    private val channels: HashMap<String, RSS> = HashMap()
     private val feedEntriesList: RealmList<RSSEntry> = RealmList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,7 +49,7 @@ class RSSNewFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, listener)
+                adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
             }
         }
         return view
@@ -88,9 +89,11 @@ class RSSNewFragment : Fragment() {
         if (resultCode == WebController.FETCH_SUCCESS && data != null &&
                 data.getStringExtra(WebController.REQUEST_TYPE) == WebController.REQUEST_NEW_CONTENT) {
             val channel: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
+            channels[channel.link!!] = channel
             feedEntriesList.addAll(channel.entries)
             Collections.shuffle(feedEntriesList)
-            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, listener)
+            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
+
             scanProgressBarNews.isIndeterminate = false
             scanProgressBarNews.visibility = View.GONE
             if (snackbar != null) {
@@ -140,7 +143,7 @@ class RSSNewFragment : Fragment() {
     }
 
     fun swapAdapter(item: RealmList<RSSEntry>) {
-        val adapter = RSSNewFeedsRecyclerViewAdapter(item, listener)
+        val adapter = RSSNewFeedsRecyclerViewAdapter(item, channels, listener)
         recyclerView.adapter = adapter
     }
 
@@ -150,8 +153,9 @@ class RSSNewFragment : Fragment() {
 
     private fun selectCategory() {
         feedEntriesList.clear()
-        recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, listener)
+        recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
         (recyclerView.adapter as RSSNewFeedsRecyclerViewAdapter).notifyDataSetChanged()
+        channels.clear()
         val titleCategory : TextView = view!!.findViewById(R.id.category_title)
         val selectWorld : ImageButton = view!!.findViewById(R.id.btn_world)
         val selectEntertainment : ImageButton = view!!.findViewById(R.id.btn_entertainment)
@@ -166,6 +170,7 @@ class RSSNewFragment : Fragment() {
             selectScience.setBackgroundColor(Color.rgb(224,224,224))
             selectSports.setBackgroundColor(Color.rgb(224,224,224))
             selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            channels.clear()
             categoriesChannels["World"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectEntertainment.setOnClickListener{
@@ -175,8 +180,7 @@ class RSSNewFragment : Fragment() {
             selectScience.setBackgroundColor(Color.rgb(224,224,224))
             selectSports.setBackgroundColor(Color.rgb(224,224,224))
             selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
-            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, listener)
-            (recyclerView.adapter as RSSNewFeedsRecyclerViewAdapter).notifyDataSetChanged()
+            channels.clear()
             categoriesChannels["Entertainment"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectScience.setOnClickListener{
@@ -186,6 +190,7 @@ class RSSNewFragment : Fragment() {
             selectScience.setBackgroundColor(Color.rgb(170,170,170))
             selectSports.setBackgroundColor(Color.rgb(224,224,224))
             selectTechnology.setBackgroundColor(Color.rgb(224,224,224))
+            channels.clear()
             categoriesChannels["Science"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectSports.setOnClickListener {
@@ -195,6 +200,7 @@ class RSSNewFragment : Fragment() {
             selectScience.setBackgroundColor(Color.rgb(224, 224, 224))
             selectSports.setBackgroundColor(Color.rgb(170, 170, 170))
             selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
+            channels.clear()
             categoriesChannels["Sports"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectTechnology.setOnClickListener{
@@ -204,6 +210,7 @@ class RSSNewFragment : Fragment() {
             selectScience.setBackgroundColor(Color.rgb(224,224,224))
             selectSports.setBackgroundColor(Color.rgb(224,224,224))
             selectTechnology.setBackgroundColor(Color.rgb(170,170,170))
+            channels.clear()
             categoriesChannels["Technology"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
     }

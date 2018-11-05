@@ -25,6 +25,7 @@ class RSSHomeRecyclerViewAdapter(
             val item = v.tag as RSS
             mListener?.onListFragmentInteraction(item)
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

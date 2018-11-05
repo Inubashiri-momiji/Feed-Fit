@@ -11,8 +11,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
-import miji.com.feedfit.fragments.PlaceholderFragment
 import miji.com.feedfit.fragments.RSSHomeFragment
 import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSS
@@ -31,13 +31,22 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+
         mainViewContainer.adapter = mSectionsPagerAdapter
         mainViewContainer.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mainViewContainer))
 
 
         Realm.init(this)
+        val config: RealmConfiguration = RealmConfiguration.Builder()
+                .name("favorites.realm")
+                .schemaVersion(42)
+                .build()
+        Realm.setDefaultConfiguration(config)
         realm = Realm.getDefaultInstance()
+
+
         //realm.executeTransaction { realm ->  realm.deleteAll()   }
     }
 
@@ -102,16 +111,12 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
                     mPageReferenceMap[position] = fragment
                     fragment
                 }
-                1 -> {
+                else -> {
                     val fragment: Fragment = RSSNewFragment()
                     mPageReferenceMap[position] = fragment
                     fragment
                 }
-                else -> {
-                    val fragment: Fragment = PlaceholderFragment.newInstance(position + 1)
-                    mPageReferenceMap[position] = fragment
-                    fragment
-                }
+
             }
         }
 
@@ -129,7 +134,7 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         }
 
         override fun getCount(): Int {
-            return 3
+            return 2
         }
 
         override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
@@ -169,9 +174,7 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         tagFragment = data!!.getStringExtra(WebController.FRAGMENT_TAG)
         val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
-        if (fragment is RSSHomeFragment) {
-            fragment.onActivityResultHome(resultCode, data)
-        }
+
         if (fragment is RSSNewFragment) {
             fragment.onActivityResultNew(resultCode, data)
         }

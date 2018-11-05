@@ -6,14 +6,17 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import io.realm.Realm
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_new_feed.view.*
 import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSNewFragment
+import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
 
 class RSSNewFeedsRecyclerViewAdapter(
         private val mValues: RealmList<RSSEntry>? = null,
+        private val channels: HashMap<String, RSS> = HashMap(),
         private val mListener: RSSNewFragment.OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<RSSNewFeedsRecyclerViewAdapter.ViewHolder>() {
 
@@ -27,9 +30,13 @@ class RSSNewFeedsRecyclerViewAdapter(
         val item = mValues!![position]
         holder.feedTitle.text = item?.title
         holder.feedSummary.text = item?.content
-        holder.btnAdd.setOnClickListener { v ->
-            val entryTag = v.tag as RSSEntry
-            mListener?.onListFragmentInteraction(entryTag.parentLink)
+        holder.btnAdd.setOnClickListener {
+            val channel: RSS = channels[item!!.parentLink]!!
+            val realm = Realm.getDefaultInstance()
+            realm.beginTransaction()
+            realm.insertOrUpdate(channel)
+
+            realm.commitTransaction()
         }
 
     }

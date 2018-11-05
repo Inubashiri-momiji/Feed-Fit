@@ -3,11 +3,11 @@ package miji.com.feedfit.utilities
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class HTMLParser {
+class HTMLParser(private val document: Document) {
 
     companion object {
-        fun parse(stream: String) { //Genera el parsing del XML mediante el uso de XMLpullParser
-            Jsoup.parse(stream)
+        fun parse(stream: String): Document { //Genera el parsing del XML mediante el uso de XMLpullParser
+            return Jsoup.parse(stream)
         }
 
         fun getImageUrl(document: Document) {
