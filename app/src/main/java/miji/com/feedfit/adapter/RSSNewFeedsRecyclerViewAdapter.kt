@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.realm.Realm
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_new_feed.view.*
-import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
@@ -19,6 +18,14 @@ class RSSNewFeedsRecyclerViewAdapter(
         private val channels: HashMap<String, RSS> = HashMap(),
         private val mListener: RSSNewFragment.OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<RSSNewFeedsRecyclerViewAdapter.ViewHolder>() {
+    private val mOnClickListener: View.OnClickListener
+
+    init {
+        mOnClickListener = View.OnClickListener { v ->
+            val item = v.tag as RSSEntry
+            mListener?.onListFragmentInteraction(item)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -38,12 +45,15 @@ class RSSNewFeedsRecyclerViewAdapter(
 
             realm.commitTransaction()
         }
-
+        with(holder.mView) {
+            tag = item
+            setOnClickListener(mOnClickListener)
+        }
     }
 
     override fun getItemCount(): Int = mValues!!.size
 
-    inner class ViewHolder(mView: View) : RecyclerView.ViewHolder(mView) {
+    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val feedTitle: TextView = mView.feed_title_news
         val feedSummary: TextView = mView.feed_summary_news
         val btnAdd: Button = mView.btn_add_favorite

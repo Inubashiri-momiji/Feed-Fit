@@ -12,14 +12,13 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_new_list.*
-import miji.com.feedfit.R
 import miji.com.feedfit.adapter.RSSNewFeedsRecyclerViewAdapter
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
@@ -31,6 +30,8 @@ import kotlin.collections.HashMap
 
 class RSSNewFragment : Fragment() {
 
+
+    var isHtmlOpen: Boolean = false
     private var columnCount = 1
     private var listener: OnListFragmentInteractionListener? = null
     private lateinit var recyclerView: RecyclerView
@@ -147,10 +148,6 @@ class RSSNewFragment : Fragment() {
         recyclerView.adapter = adapter
     }
 
-    /*fun onBackPress(): Boolean {
-        return false
-    }*/
-
     private fun selectCategory() {
         feedEntriesList.clear()
         recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
@@ -257,5 +254,15 @@ class RSSNewFragment : Fragment() {
         fun onListFragmentInteraction(item: RSS?)
         fun onListFragmentInteraction(item: RSSEntry?)
         fun onListFragmentInteraction(item: String?)
+    }
+
+    fun showHTML(html: String) {
+        isHtmlOpen = true
+        val trans = fragmentManager!!.beginTransaction()
+        trans.replace(R.id.news_constraint_layout, WebViewFragment.newInstance(html))
+        trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        trans.addToBackStack(null)
+
+        trans.commit()
     }
 }
