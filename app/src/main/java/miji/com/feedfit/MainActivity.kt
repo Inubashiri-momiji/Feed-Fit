@@ -2,7 +2,6 @@ package miji.com.feedfit
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +24,7 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private lateinit var realm: Realm
     private var tagFragment: String = ""
+    private var actualPos = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,17 +64,23 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onBackPressed() {
-        val fragment = mSectionsPagerAdapter?.getCurrentFragment()
         val callResult: Boolean
-        callResult = (fragment as? RSSHomeFragment)?.onBackPress()!!
-        if (!callResult)
-            super.onBackPressed()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        val fragment = mSectionsPagerAdapter?.getCurrentFragment()
+        if (fragment is RSSHomeFragment) {
+            callResult = (fragment as? RSSHomeFragment)?.onBackPress()!!
+            if (!callResult) {
+                super.onBackPressed()
+            }
+        } else if (fragment is RSSNewFragment) {
+            if (fragment.isHtmlOpen) {
+                fragment.isHtmlOpen = false
+                super.onBackPressed()
+            } else {
+                mainViewContainer.currentItem = 0
+            }
+        } else {
+            mainViewContainer.currentItem = 0
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -155,11 +161,11 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
         if (fragment is RSSHomeFragment) {
             fragment.showHTML(item?.content!!)
-        }/*else {
+        } else {
             if (fragment is RSSNewFragment){
                 fragment.showHTML(item?.content!!)
             }
-        }*/
+        }
     }
 
     override fun onListFragmentInteraction(item: String?) {

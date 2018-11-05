@@ -3,13 +3,16 @@ package miji.com.feedfit.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_rss_home_feed.view.*
-import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSHomeFragment
 import miji.com.feedfit.model.RSSEntry
+import miji.com.feedfit.utilities.HTMLParser
+import org.jsoup.select.Elements
 
 class RSSHomeFeedsRecyclerViewAdapter(
         private val mValues: RealmList<RSSEntry>? = null,
@@ -34,10 +37,12 @@ class RSSHomeFeedsRecyclerViewAdapter(
         val item = mValues!![position]
         holder.feedTitle.text = item?.title
         holder.feedAuthor.text = item?.author
-        holder.feedCategory.text = item?.category
-        holder.feedSummary.text = item?.summary
-        // holder.imageFeed.setImageBitmap(null)
-        // Picasso.get().load(item?.logo).into(holder.imageFeed)
+        val test: Elements = HTMLParser.getImageUrl(HTMLParser.parse(item?.content!!))
+        if (!test.isEmpty()) {
+            Picasso.get().load(test[0].attr("src")).into(holder.feedImage)
+        } else {
+            Picasso.get().load("https://image.flaticon.com/icons/png/128/9/9550.png").into(holder.feedImage)
+        }
         holder.itemView.tag = item
         with(holder.mView) {
             tag = item
@@ -50,7 +55,6 @@ class RSSHomeFeedsRecyclerViewAdapter(
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val feedTitle: TextView = mView.feed_title
         val feedAuthor: TextView = mView.feed_author
-        val feedCategory: TextView = mView.feed_category
-        val feedSummary: TextView = mView.feed_summary
+        val feedImage: ImageView = mView.feed_image
     }
 }
