@@ -2,7 +2,6 @@ package miji.com.feedfit
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +10,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
-import miji.com.feedfit.fragments.PlaceholderFragment
 import miji.com.feedfit.fragments.RSSHomeFragment
 import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSS
@@ -25,19 +24,29 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private lateinit var realm: Realm
     private var tagFragment: String = ""
+    private var actualPos = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+
         mainViewContainer.adapter = mSectionsPagerAdapter
         mainViewContainer.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mainViewContainer))
 
 
         Realm.init(this)
+        val config: RealmConfiguration = RealmConfiguration.Builder()
+                .name("favorites.realm")
+                .schemaVersion(42)
+                .build()
+        Realm.setDefaultConfiguration(config)
         realm = Realm.getDefaultInstance()
+
+
         //realm.executeTransaction { realm ->  realm.deleteAll()   }
     }
 
@@ -65,16 +74,17 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
 
     override fun onBackPressed() {
         val fragment = mSectionsPagerAdapter?.getCurrentFragment()
-        val callResult: Boolean
-        callResult = (fragment as? RSSHomeFragment)?.onBackPress()!!
-        if (!callResult)
+        if (fragment is RSSNewFragment) {
+            if (fragment.isHtmlOpen) {
+                fragment.isHtmlOpen = false
+            }
             super.onBackPressed()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        } else if (fragment is RSSHomeFragment) {
+            when ((fragment as? RSSHomeFragment)?.onBackPress()!!) {
+                RSSHomeFragment.CLOSE_HTML -> super.onBackPressed()
+                RSSHomeFragment.RETURN_FIRST_SCREEN -> mainViewContainer.currentItem = RSSNewFragment.FRAGMENTID
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -97,27 +107,23 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         private var mCurrentFragment: Fragment? = null
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> {
+                RSSHomeFragment.FRAGMENTID -> {
                     val fragment: Fragment = RSSHomeFragment()
                     mPageReferenceMap[position] = fragment
                     fragment
                 }
-                1 -> {
+                else -> {
                     val fragment: Fragment = RSSNewFragment()
                     mPageReferenceMap[position] = fragment
                     fragment
                 }
-                else -> {
-                    val fragment: Fragment = PlaceholderFragment.newInstance(position + 1)
-                    mPageReferenceMap[position] = fragment
-                    fragment
-                }
+
             }
         }
 
-        /*fun getFragment(key: Int): Fragment? {
+        fun getFragment(key: Int): Fragment? {
             return mPageReferenceMap[key]
-        }*/
+        }
 
         fun getCurrentFragment(): Fragment? {
             return mCurrentFragment
@@ -129,7 +135,7 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         }
 
         override fun getCount(): Int {
-            return 3
+            return 2
         }
 
         override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
@@ -141,25 +147,21 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onListFragmentInteraction(item: RSS?) {
-        val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSHomeFragment.FRAGMENTID)!!
         if (fragment is RSSHomeFragment) {
             fragment.swapAdapter(item!!.entries)
-        } else {
-            if (fragment is RSSNewFragment) {
-                fragment.swapAdapter(item!!.entries)
-            }
         }
     }
 
-    override fun onListFragmentInteraction(item: RSSEntry?) {
-        val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
+    override fun onListFragmentInteraction(item: RSSEntry?, index: Int) {
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(index)!!
         if (fragment is RSSHomeFragment) {
             fragment.showHTML(item?.content!!)
-        }/*else {
+        } else {
             if (fragment is RSSNewFragment){
                 fragment.showHTML(item?.content!!)
             }
-        }*/
+        }
     }
 
     override fun onListFragmentInteraction(item: String?) {
@@ -169,9 +171,7 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         tagFragment = data!!.getStringExtra(WebController.FRAGMENT_TAG)
         val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
-        if (fragment is RSSHomeFragment) {
-            fragment.onActivityResultHome(resultCode, data)
-        }
+
         if (fragment is RSSNewFragment) {
             fragment.onActivityResultNew(resultCode, data)
         }
