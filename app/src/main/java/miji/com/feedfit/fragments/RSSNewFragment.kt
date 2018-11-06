@@ -297,7 +297,6 @@ class RSSNewFragment : Fragment() {
         trans.replace(R.id.news_constraint_layout, WebViewFragment.newInstance(html))
         trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         trans.addToBackStack(null)
-
         trans.commit()
     }
 

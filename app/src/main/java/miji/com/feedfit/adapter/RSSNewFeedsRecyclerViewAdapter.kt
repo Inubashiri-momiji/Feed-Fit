@@ -13,6 +13,7 @@ import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
+import java.net.URI
 
 class RSSNewFeedsRecyclerViewAdapter(
         private val mValues: RealmList<RSSEntry>? = null,
@@ -46,6 +47,12 @@ class RSSNewFeedsRecyclerViewAdapter(
             realm.commitTransaction()
             mListener?.updateFavorites()
         }
+        val itemDomain = URI(item?.parentLink)
+        if (itemDomain.host.isNullOrBlank()) {
+            holder.feedDomain.text = URI(item?.author).host
+        } else {
+            holder.feedDomain.text = itemDomain.host
+        }
         with(holder.mView) {
             tag = item
             setOnClickListener(mOnClickListener)
@@ -58,5 +65,6 @@ class RSSNewFeedsRecyclerViewAdapter(
         val feedTitle: TextView = mView.feed_title_news
         val feedSummary: TextView = mView.feed_summary_news
         val btnAdd: Button = mView.btn_add_favorite
+        val feedDomain: TextView = mView.feed_domain
     }
 }

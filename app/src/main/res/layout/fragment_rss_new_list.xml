@@ -102,9 +102,6 @@
                 android:id="@+id/NewsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"
-                android:clipChildren="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/fragment_rss_new_feed" />
         </LinearLayout>

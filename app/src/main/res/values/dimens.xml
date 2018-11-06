@@ -3,9 +3,11 @@
     <dimen name="toolbar_height">40dp</dimen>
     <dimen name="appbar_padding_top">6dp</dimen>
     <dimen name="card_spacing">8dp</dimen>
+    <dimen name="card_spacing_medium">4dp</dimen>
     <dimen name="card_spacing_min">2dp</dimen>
     <dimen name="card_round">10dp</dimen>
     <dimen name="card_stroke">3dp</dimen>
+    <dimen name="image_size">80dp</dimen>
 
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->

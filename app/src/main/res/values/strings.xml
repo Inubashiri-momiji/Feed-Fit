@@ -18,4 +18,6 @@
     <string name="news_technology">Technology News</string>
     <string name="description_feed_title">Feed title</string>
     <string name="description_feed_summary">Feed Summary</string>
+    <string name="follow">Follow</string>
+    <string name="description_follow">Follow channel</string>
 </resources>
