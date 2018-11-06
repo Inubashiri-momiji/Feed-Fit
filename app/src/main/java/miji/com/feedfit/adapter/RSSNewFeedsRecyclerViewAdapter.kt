@@ -13,7 +13,9 @@ import miji.com.feedfit.R
 import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
+import miji.com.feedfit.utilities.HTMLParser
 import java.net.URI
+
 
 class RSSNewFeedsRecyclerViewAdapter(
         private val mValues: RealmList<RSSEntry>? = null,
@@ -38,18 +40,22 @@ class RSSNewFeedsRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues!![position]
         holder.feedTitle.text = item?.title
-        holder.feedSummary.text = item?.content
+        if (item?.content?.matches(Regex(".*</?.*>.*"))!!) {
+            holder.feedSummary.text = (HTMLParser.parseFromString(item.content!!)).body().text()
+        } else
+            holder.feedSummary.text = item.content
+
         holder.btnAdd.setOnClickListener {
-            val channel: RSS = channels[item!!.parentLink]!!
+            val channel: RSS = channels[item.parentLink]!!
             val realm = Realm.getDefaultInstance()
             realm.beginTransaction()
             realm.insertOrUpdate(channel)
             realm.commitTransaction()
             mListener?.updateFavorites()
         }
-        val itemDomain = URI(item?.parentLink)
+        val itemDomain = URI(item.parentLink)
         if (itemDomain.host.isNullOrBlank()) {
-            holder.feedDomain.text = URI(item?.author).host
+            holder.feedDomain.text = URI(item.author).host
         } else {
             holder.feedDomain.text = itemDomain.host
         }
