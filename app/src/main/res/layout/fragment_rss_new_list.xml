@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/news_constraint_layout"
+    android:name="miji.com.feedfit.Fragments.RSSNewFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.RSSNewFragment">
+
+    <ProgressBar
+        android:id="@+id/scanProgressBarNews"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="52dp"
+        android:indeterminate="true"
+        android:padding="0dp"
+        app:elevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/news_constraint_layout" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayoutNews"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/colorButtonNormal"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btn_world"
+                    android:layout_width="57dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:contentDescription="@string/world_feeds"
+                    android:src="@drawable/ic_menu_world" />
+
+                <ImageButton
+                    android:id="@+id/btn_entertainment"
+                    android:layout_width="55dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:contentDescription="@string/entertainment_feeds"
+                    android:src="@drawable/ic_menu_entertainment" />
+
+                <ImageButton
+                    android:id="@+id/btn_science"
+                    android:layout_width="66dp"
+                    android:layout_height="62dp"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:contentDescription="@string/science_feeds"
+                    android:src="@drawable/ic_menu_science" />
+
+                <ImageButton
+                    android:id="@+id/btn_sports"
+                    android:layout_width="52dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:contentDescription="@string/sports_feeds"
+                    android:src="@drawable/ic_menu_sports" />
+
+                <ImageButton
+                    android:id="@+id/btn_technology"
+                    android:layout_width="45dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/materialGrey"
+                    android:contentDescription="@string/technology_feeds"
+                    android:src="@drawable/ic_menu_tech" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/category_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="3dp"
+                android:text="@string/world_news"
+                android:textSize="24sp"
+                android:textStyle="bold|italic" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/NewsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/fragment_rss_new_feed" />
+        </LinearLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

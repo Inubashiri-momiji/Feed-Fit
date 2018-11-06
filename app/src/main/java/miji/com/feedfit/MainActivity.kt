@@ -2,40 +2,55 @@ package miji.com.feedfit
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
+import android.text.Html
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import com.google.android.material.tabs.TabLayout
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
-import miji.com.feedfit.fragments.PlaceholderFragment
-import miji.com.feedfit.fragments.RSSHomeFragment
-import miji.com.feedfit.fragments.dummy.DummyContent
+import miji.com.feedfit.fragments.RSSFavoritesFragment
+import miji.com.feedfit.fragments.RSSNewFragment
+import miji.com.feedfit.model.RSS
+import miji.com.feedfit.model.RSSEntry
 import miji.com.feedfit.utilities.WebController
 
-class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteractionListener {
 
+class MainActivity : AppCompatActivity(), RSSFavoritesFragment.OnListFragmentInteractionListener, RSSNewFragment.OnListFragmentInteractionListener {
 
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private lateinit var realm: Realm
+    private var tagFragment: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val appName = "<font color=#EEEEEE>Feed</font> <font color=#D4E157>Fit</font>"
+        toolbar.title = Html.fromHtml(appName, 0)
+
         setSupportActionBar(toolbar)
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+
         mainViewContainer.adapter = mSectionsPagerAdapter
         mainViewContainer.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mainViewContainer))
 
+
         Realm.init(this)
+        val config: RealmConfiguration = RealmConfiguration.Builder()
+                .name("favorites.realm")
+                .schemaVersion(42)
+                .build()
+        Realm.setDefaultConfiguration(config)
         realm = Realm.getDefaultInstance()
+
+
         //realm.executeTransaction { realm ->  realm.deleteAll()   }
-        val intent = Intent(applicationContext, WebController::class.java)
-        startService(intent)
     }
 
     override fun onDestroy() {
@@ -60,23 +75,20 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         super.onPause()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-        if (id == R.id.action_settings) {
-            return true
+    override fun onBackPressed() {
+        val fragment = mSectionsPagerAdapter?.getCurrentFragment()
+        when (fragment) {
+            is RSSNewFragment -> {
+                if (fragment.isHtmlOpen) {
+                    fragment.isHtmlOpen = false
+                }
+                super.onBackPressed()
+            }
+            is RSSFavoritesFragment -> when ((fragment as? RSSFavoritesFragment)?.onBackPress()!!) {
+                RSSFavoritesFragment.CLOSE_HTML -> super.onBackPressed()
+                RSSFavoritesFragment.RETURN_FIRST_SCREEN -> mainViewContainer.currentItem = RSSNewFragment.FRAGMENTID
+            }
         }
-
-        return super.onOptionsItemSelected(item)
     }
 
 
@@ -85,23 +97,79 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
      * one of the sections/tabs/pages.
      */
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-
+        private val mPageReferenceMap: HashMap<Int, Fragment> = HashMap()
+        private var mCurrentFragment: Fragment? = null
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> RSSHomeFragment()
-                else -> PlaceholderFragment.newInstance(position + 1)
-            }
+                RSSFavoritesFragment.FRAGMENTID -> {
+                    val fragment: Fragment = RSSFavoritesFragment()
+                    mPageReferenceMap[position] = fragment
+                    fragment
+                }
+                else -> {
+                    val fragment: Fragment = RSSNewFragment()
+                    mPageReferenceMap[position] = fragment
+                    fragment
+                }
 
+            }
+        }
+
+        fun getFragment(key: Int): Fragment? {
+            return mPageReferenceMap[key]
+        }
+
+        fun getCurrentFragment(): Fragment? {
+            return mCurrentFragment
+        }
+
+        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+            super.destroyItem(container, position, `object`)
+            mPageReferenceMap.remove(position)
         }
 
         override fun getCount(): Int {
-            // Show 3 total pages.
-            return 3
+            return 2
+        }
+
+        override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
+            if (getCurrentFragment() !== `object`) {
+                mCurrentFragment = `object` as Fragment
+            }
+            super.setPrimaryItem(container, position, `object`)
         }
     }
 
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onListFragmentInteraction(item: RSS?) {
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSFavoritesFragment.FRAGMENTID)!!
+        if (fragment is RSSFavoritesFragment) {
+            fragment.swapAdapter(item!!.entries)
+        }
     }
 
+    override fun onListFragmentInteraction(item: RSSEntry?, index: Int) {
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(index)!!
+        when (fragment) {
+            is RSSFavoritesFragment -> fragment.showHTML(item?.content!!)
+            is RSSNewFragment -> fragment.showHTML(item?.content!!)
+        }
+    }
+
+    override fun updateFavorites() {
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSFavoritesFragment.FRAGMENTID)!!
+        if (fragment is RSSFavoritesFragment) {
+            fragment.loadContent()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        tagFragment = data!!.getStringExtra(WebController.FRAGMENT_TAG)
+        val fragment: Fragment = supportFragmentManager.findFragmentByTag(tagFragment)!!
+
+        if (fragment is RSSNewFragment) {
+            fragment.onActivityResultNew(resultCode, data)
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 }
