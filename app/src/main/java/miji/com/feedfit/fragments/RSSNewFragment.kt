@@ -92,15 +92,17 @@ class RSSNewFragment : Fragment() {
         if (resultCode == WebController.FETCH_SUCCESS && data != null &&
                 data.getStringExtra(WebController.REQUEST_TYPE) == WebController.REQUEST_NEW_CONTENT) {
             val channel: RSS = data.getParcelableExtra(WebController.PARCELABLE_EXTRAS)
-            channels[channel.link!!] = channel
-            feedEntriesList.addAll(channel.entries)
-            Collections.shuffle(feedEntriesList)
-            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
+            if (channel != null) {
+                channels[channel.link!!] = channel
+                feedEntriesList.addAll(channel.entries)
+                Collections.shuffle(feedEntriesList)
+                recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
 
-            scanProgressBarNews.isIndeterminate = false
-            scanProgressBarNews.visibility = View.GONE
-            if (snackbar != null) {
-                snackbar!!.dismiss()
+                scanProgressBarNews.isIndeterminate = false
+                scanProgressBarNews.visibility = View.GONE
+                if (snackbar != null) {
+                    snackbar!!.dismiss()
+                }
             }
 
         } else if (resultCode == WebController.FETCH_TIMEOUT) {
