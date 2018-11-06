@@ -1,5 +1,6 @@
 package miji.com.feedfit.utilities
 
+import android.os.StrictMode
 import android.util.Log
 import android.util.Xml
 import miji.com.feedfit.model.RSS
@@ -8,6 +9,7 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.ByteArrayInputStream
 import java.io.IOException
+
 
 class XMLParser {  //  more information at @link:https://developer.android.com/training/basics/network-ops/xml#kotlin
 
@@ -49,33 +51,49 @@ class XMLParser {  //  more information at @link:https://developer.android.com/t
                         when (tagName) { //Al llegar al final del documento, se genera el objeto resultado del parsing
 
                             //Feed
-                            "item" -> {
+                            "item", "entry" -> {
                                 entry?.parentLink = rss.link
+                                if (rss.icon.isNullOrBlank() && rss.logo.isNullOrBlank()) {
+                                    val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+                                    StrictMode.setThreadPolicy(policy)
+                                    val faviconURL: String = HTMLParser.getFaviconURL(HTMLParser.parseWeb(rss.link!!))
+                                    rss.icon = (faviconURL).trim()
+                                }
                                 rss.entries.add(entry!!)
                             }//RSS 2.0
-                            "entry" -> {
-                                entry?.parentLink = rss.link
-                                rss.entries.add(entry!!) //Atom 1.0
+
+                            "icon" -> {
+                                rss.icon = text?.trim()               //Atom 1.0 favicon}
+                                if (rss.icon.isNullOrBlank())
+                                    rss.icon = null
                             }
-                            "icon" -> rss.icon = text //Atom 1.0 favicon
-                            "logo" -> rss.logo = text //Atom 1.0
-                            "image" -> rss.logo = text //RSS 2.0
-                            "subtitle" -> rss.subtitle = text //Atom 1.0
-                            "pubDate" -> rss.pubdate = text //RSS2.0
+                            "logo", "url", "imagen" -> {
+                                rss.logo = text?.trim() //RSS 2.0
+                                if (rss.logo.isNullOrBlank())
+                                    rss.logo = null
+                            }
+                            "subtitle" -> rss.subtitle = text?.trim() //Atom 1.0
+                            "pubDate" -> rss.pubdate = text?.trim() //RSS2.0
                             //Entradas -- items
-                            "published" -> entry?.published = text //Atom 1.0
-                            "content" -> entry?.content = text //Atom 1.0
-                            "summary" -> entry?.summary = text //Atom 1.0
-                            "enclosure" -> entry?.enclosure = text //RSS2.0
+                            "published" -> entry?.published = text?.trim() //Atom 1.0
+                            "content" -> entry?.content = text?.trim() //Atom 1.0
+                            "summary" -> entry?.summary = text?.trim() //Atom 1.0
+                            "enclosure" -> entry?.enclosure = text?.trim() //RSS2.0
                             //Compartidas entradas e items
                             "description" -> if (entry != null) entry.content = text //Atom 1.0 - RSS 2.0
-                            else rss.subtitle = text
+                            else rss.subtitle = text?.trim()
                             "title" -> if (entry != null) entry.title = text //Atom 1.0 - RSS 2.0
-                            else rss.title = text
+                            else rss.title = text?.trim()
                             "category" -> if (entry != null) entry.category = text //Atom 1.0 - RSS 2.0
-                            else rss.category = text
+                            else rss.category = text?.trim()
                             "link" -> if (entry != null) entry.link = text //Atom 1.0 - RSS 2.0
-                            else rss.link = text
+                            else { //caso del Canal
+                                if (text.isNullOrBlank() && parser.attributeCount > 0) {
+                                    rss.link = parser.getAttributeValue(null, "href")
+                                } else {
+                                    rss.link = text
+                                }
+                            }
                             "author" -> if (entry != null) entry.author = text //Atom 1.0 - RSS 2.0
                             else rss.author = text
                         }

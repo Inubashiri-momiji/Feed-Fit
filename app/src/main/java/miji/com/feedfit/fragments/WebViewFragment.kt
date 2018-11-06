@@ -1,6 +1,5 @@
 package miji.com.feedfit.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import miji.com.feedfit.R
 
 class WebViewFragment : Fragment() {
     private var html: String? = null
-    private var listener: OnFragmentInteractionListener? = null
     private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,30 +33,6 @@ class WebViewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    /*// TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
-    }*/
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            //throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        //fun onFragmentInteraction(uri: Uri)
-    }
 
     companion object {
         /**

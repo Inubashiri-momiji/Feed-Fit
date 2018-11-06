@@ -5,8 +5,6 @@
     <string name="image_from_article">Article image</string>
     <string name="error_timeout">Connection time-out</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-
     <string name="world_feeds">World feeds</string>
     <string name="entertainment_feeds">Entertainment Feeds</string>
     <string name="science_feeds">Science feeds</string>

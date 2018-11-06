@@ -148,9 +148,10 @@ class RSSNewFragment : Fragment() {
 
     private fun selectCategory() {
         feedEntriesList.clear()
+        channels.clear()
         recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
         (recyclerView.adapter as RSSNewFeedsRecyclerViewAdapter).notifyDataSetChanged()
-        channels.clear()
+
         val titleCategory: TextView = view!!.findViewById(R.id.category_title)
         val selectWorld: ImageButton = view!!.findViewById(R.id.btn_world)
         val selectEntertainment: ImageButton = view!!.findViewById(R.id.btn_entertainment)
@@ -166,6 +167,8 @@ class RSSNewFragment : Fragment() {
             selectSports.setBackgroundColor(Color.rgb(224, 224, 224))
             selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
             channels.clear()
+            feedEntriesList.clear()
+            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
             categoriesChannels["World"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectEntertainment.setOnClickListener {
@@ -176,6 +179,8 @@ class RSSNewFragment : Fragment() {
             selectSports.setBackgroundColor(Color.rgb(224, 224, 224))
             selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
             channels.clear()
+            feedEntriesList.clear()
+            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
             categoriesChannels["Entertainment"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectScience.setOnClickListener {
@@ -186,6 +191,8 @@ class RSSNewFragment : Fragment() {
             selectSports.setBackgroundColor(Color.rgb(224, 224, 224))
             selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
             channels.clear()
+            feedEntriesList.clear()
+            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
             categoriesChannels["Science"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectSports.setOnClickListener {
@@ -196,6 +203,8 @@ class RSSNewFragment : Fragment() {
             selectSports.setBackgroundColor(Color.rgb(170, 170, 170))
             selectTechnology.setBackgroundColor(Color.rgb(224, 224, 224))
             channels.clear()
+            feedEntriesList.clear()
+            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
             categoriesChannels["Sports"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
         selectTechnology.setOnClickListener {
@@ -206,6 +215,8 @@ class RSSNewFragment : Fragment() {
             selectSports.setBackgroundColor(Color.rgb(224, 224, 224))
             selectTechnology.setBackgroundColor(Color.rgb(170, 170, 170))
             channels.clear()
+            feedEntriesList.clear()
+            recyclerView.adapter = RSSNewFeedsRecyclerViewAdapter(feedEntriesList, channels, listener)
             categoriesChannels["Technology"]!!.forEach { element -> getFeeds(element, WebController.REQUEST_NEW_CONTENT) }
         }
     }
@@ -220,6 +231,7 @@ class RSSNewFragment : Fragment() {
                 "http://feeds.skynews.com/feeds/rss/world.xml",
                 "https://www.clarin.com/rss/mundo/",
                 "https://www.economist.com/international/rss.xml",
+                "https://www.reddit.com/r/news/.rss",
                 "https://www.cnbc.com/id/100727362/device/rss/rss.html"
         ))
         categoriesChannels["Entertainment"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Television.xml",
@@ -231,7 +243,10 @@ class RSSNewFragment : Fragment() {
                 "https://www.clarin.com/rss/espectaculos/cine/",
                 "https://www.clarin.com/rss/eespectaculos/musica/",
                 "https://www.clarin.com/rss/espectaculos/teatro/",
-                "https://www.clarin.com/rss/espectaculos/","http://feeds.skynews.com/feeds/rss/entertainment.xml"
+                "https://www.reddit.com/r/entertainment/.rss",
+                "https://www.reddit.com/r/Music/.rss",
+                "https://www.clarin.com/rss/espectaculos/",
+                "http://feeds.skynews.com/feeds/rss/entertainment.xml"
         ))
         categoriesChannels["Science"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Science.xml",
                 "http://rss.cnn.com/rss/edition_space.rss",
@@ -242,6 +257,8 @@ class RSSNewFragment : Fragment() {
                 "https://www.nasa.gov/rss/dyn/shuttle_station.rss",
                 "https://www.nasa.gov/rss/dyn/solar_system.rss",
                 "https://www.nasa.gov/rss/dyn/earth.rss",
+                "https://www.reddit.com/r/DIY/.rss",
+                "https://www.reddit.com/r/science/.rss",
                 "https://www.nasa.gov/rss/dyn/breaking_news.rss"
         ))
         categoriesChannels["Sports"] = ArrayList(Arrays.asList("http://rss.nytimes.com/services/xml/rss/nyt/Sports.xml",
@@ -250,6 +267,7 @@ class RSSNewFragment : Fragment() {
                 "https://news.co.cr/sports/feed/",
                 "http://feeds.reuters.com/reuters/sportsNews",
                 "https://www.20minutos.es/rss/deportes/",
+                "https://www.reddit.com/r/sports/.rss",
                 "https://www.clarin.com/rss/deportes/futbol/",
                 "https://www.clarin.com/rss/deportes/futbol-internacional/"
         ))
@@ -258,17 +276,19 @@ class RSSNewFragment : Fragment() {
                 "http://ep00.epimg.net/rss/tecnologia/portada.xml",
                 "https://news.co.cr/technology/feed/",
                 "http://feeds.reuters.com/reuters/technologyNews",
-                "https://www.20minutos.es/rss/tecnologia/","https://www.clarin.com/rss/tecnologia/",
+                "https://www.20minutos.es/rss/tecnologia/", "https://www.clarin.com/rss/tecnologia/",
                 "http://feeds.skynews.com/feeds/rss/technology.xml",
                 "https://www.economist.com/science-and-technology/rss.xml",
-                "https://www.cnbc.com/id/19854910/device/rss/rss.html"
+                "https://www.cnbc.com/id/19854910/device/rss/rss.html",
+                "https://www.reddit.com/r/technology/.rss",
+                "https://www.reddit.com/r/consoles/.rss"
         ))
     }
 
     interface OnListFragmentInteractionListener {
         fun onListFragmentInteraction(item: RSS?)
         fun onListFragmentInteraction(item: RSSEntry?, index: Int)
-        fun onListFragmentInteraction(item: String?)
+        fun updateFavorites()
     }
 
     fun showHTML(html: String) {

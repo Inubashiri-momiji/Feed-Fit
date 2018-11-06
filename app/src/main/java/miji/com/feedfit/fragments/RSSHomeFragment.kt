@@ -46,8 +46,6 @@ class RSSHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (realm.isClosed)
-            realm = Realm.getDefaultInstance()
         recyclerView = homeRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(context!!)
         loadContent()
@@ -76,8 +74,9 @@ class RSSHomeFragment : Fragment() {
     }
 
 
-    private fun loadContent() {
-
+    fun loadContent() {
+        if (realm.isClosed)
+            realm = Realm.getDefaultInstance()
         val data = realm.copyFromRealm(realm.where<RSS>().findAll())
         val test: RealmList<RSS> = RealmList()
         test.addAll(data.subList(0, data.size))

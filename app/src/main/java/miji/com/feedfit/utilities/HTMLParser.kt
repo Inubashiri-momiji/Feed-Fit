@@ -8,8 +8,12 @@ class HTMLParser {
 
     companion object {
 
-        fun parse(stream: String): Document { //Genera el parsing del XML mediante el uso de XMLpullParser
+        fun parseFromString(stream: String): Document { //Genera el parsing del XML mediante el uso de XMLpullParser
             return Jsoup.parse(stream)
+        }
+
+        fun parseWeb(url: String): Document {
+            return Jsoup.connect(url).maxBodySize(20000).get()
         }
 
         fun getImageUrl(document: Document): Elements {
@@ -19,6 +23,11 @@ class HTMLParser {
         fun getDocumentURLS(document: Document): Elements {
             return document.select("a[href]")
         }
+
+        fun getFaviconURL(document: Document): String {
+            return document.head().select("link[href~=.*\\.(png)]")[0].attr("href")
+        }
+
     }
 
 }

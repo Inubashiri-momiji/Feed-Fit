@@ -38,12 +38,22 @@ class RSSHomeFeedsRecyclerViewAdapter(
         val item = mValues!![position]
         holder.feedTitle.text = item?.title
         holder.feedAuthor.text = item?.author
-        val test: Elements = HTMLParser.getImageUrl(HTMLParser.parse(item?.content!!))
+        val test: Elements = HTMLParser.getImageUrl(HTMLParser.parseFromString(item?.content!!))
         if (!test.isEmpty()) {
             Picasso.get().load(test[0].attr("src")).into(holder.feedImage)
         } else {
             Picasso.get().load("https://image.flaticon.com/icons/png/128/9/9550.png").into(holder.feedImage)
         }
+
+
+        /*holder.feedImage.setImageBitmap(null)
+        when {
+            !item!!.logo.isNullOrBlank() && item.logo!!.matches(Regex(".*\\.(a?png|jpe?g|giff?|tiff|bmp|)"))  -> Picasso.get().load(item.logo).error(R.drawable.noimage).into(holder.imageFeed)
+            !item.icon.isNullOrBlank()  -> Picasso.get().load(item.icon).error(R.drawable.noimage).into(holder.imageFeed)
+            else ->   Picasso.get().load(item.icon).error(R.drawable.noimage).into(holder.imageFeed)
+        }*/
+
+
         holder.itemView.tag = item
         with(holder.mView) {
             tag = item

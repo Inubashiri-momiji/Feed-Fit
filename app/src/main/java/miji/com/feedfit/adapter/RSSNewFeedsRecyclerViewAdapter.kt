@@ -43,8 +43,8 @@ class RSSNewFeedsRecyclerViewAdapter(
             val realm = Realm.getDefaultInstance()
             realm.beginTransaction()
             realm.insertOrUpdate(channel)
-
             realm.commitTransaction()
+            mListener?.updateFavorites()
         }
         with(holder.mView) {
             tag = item

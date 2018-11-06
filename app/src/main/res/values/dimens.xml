@@ -2,8 +2,8 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="toolbar_height">40dp</dimen>
     <dimen name="appbar_padding_top">6dp</dimen>
-    <dimen name="spacing_medium">8dp</dimen>
     <dimen name="card_spacing">8dp</dimen>
+    <dimen name="card_spacing_min">2dp</dimen>
     <dimen name="card_round">10dp</dimen>
     <dimen name="card_stroke">3dp</dimen>
 

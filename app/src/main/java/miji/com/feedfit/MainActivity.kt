@@ -2,6 +2,7 @@ package miji.com.feedfit
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -27,6 +28,10 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val appName = "<font color=#EEEEEE>Feed</font> <font color=#D4E157>Fit</font>"
+        toolbar.title = Html.fromHtml(appName, 0)
+
         setSupportActionBar(toolbar)
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
@@ -72,13 +77,14 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
 
     override fun onBackPressed() {
         val fragment = mSectionsPagerAdapter?.getCurrentFragment()
-        if (fragment is RSSNewFragment) {
-            if (fragment.isHtmlOpen) {
-                fragment.isHtmlOpen = false
+        when (fragment) {
+            is RSSNewFragment -> {
+                if (fragment.isHtmlOpen) {
+                    fragment.isHtmlOpen = false
+                }
+                super.onBackPressed()
             }
-            super.onBackPressed()
-        } else if (fragment is RSSHomeFragment) {
-            when ((fragment as? RSSHomeFragment)?.onBackPress()!!) {
+            is RSSHomeFragment -> when ((fragment as? RSSHomeFragment)?.onBackPress()!!) {
                 RSSHomeFragment.CLOSE_HTML -> super.onBackPressed()
                 RSSHomeFragment.RETURN_FIRST_SCREEN -> mainViewContainer.currentItem = RSSNewFragment.FRAGMENTID
             }
@@ -143,17 +149,17 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
 
     override fun onListFragmentInteraction(item: RSSEntry?, index: Int) {
         val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(index)!!
-        if (fragment is RSSHomeFragment) {
-            fragment.showHTML(item?.content!!)
-        } else {
-            if (fragment is RSSNewFragment) {
-                fragment.showHTML(item?.content!!)
-            }
+        when (fragment) {
+            is RSSHomeFragment -> fragment.showHTML(item?.content!!)
+            is RSSNewFragment -> fragment.showHTML(item?.content!!)
         }
     }
 
-    override fun onListFragmentInteraction(item: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun updateFavorites() {
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSHomeFragment.FRAGMENTID)!!
+        if (fragment is RSSHomeFragment) {
+            fragment.loadContent()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

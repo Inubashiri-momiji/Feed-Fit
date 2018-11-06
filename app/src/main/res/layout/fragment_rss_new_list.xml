@@ -106,7 +106,7 @@
                 android:layout_marginRight="6dp"
                 android:clipChildren="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:listitem="@layout/fragment_rss_new" />
+                tools:listitem="@layout/fragment_rss_new_feed" />
         </LinearLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

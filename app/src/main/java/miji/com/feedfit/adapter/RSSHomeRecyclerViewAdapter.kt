@@ -36,12 +36,13 @@ class RSSHomeRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues!![position]
-        holder.summaryFeed.text = item?.title
+        holder.feedTitle.text = item?.title
+        holder.feedSummary.text = item?.subtitle
         holder.imageFeed.setImageBitmap(null)
-        if (item!!.link!!.isEmpty()) {
-            Picasso.get().load(item.logo).into(holder.imageFeed)
-        } else {
-            Picasso.get().load("https://image.flaticon.com/icons/png/128/9/9550.png").into(holder.imageFeed)
+        when {
+            !item!!.logo.isNullOrBlank() && item.logo!!.matches(Regex(".*\\.(a?png|jpe?g|giff?|tiff|bmp|)")) -> Picasso.get().load(item.logo).error(R.drawable.noimage).into(holder.imageFeed)
+            !item.icon.isNullOrBlank() -> Picasso.get().load(item.icon).error(R.drawable.noimage).into(holder.imageFeed)
+            else -> Picasso.get().load(item.icon).error(R.drawable.noimage).into(holder.imageFeed)
         }
 
         holder.itemView.tag = item
@@ -55,6 +56,7 @@ class RSSHomeRecyclerViewAdapter(
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val imageFeed: ImageView = mView.rss_image
-        val summaryFeed: TextView = mView.rss_title
+        val feedTitle: TextView = mView.rss_title
+        val feedSummary: TextView = mView.rss_summary
     }
 }
