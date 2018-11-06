@@ -12,14 +12,14 @@ import com.google.android.material.tabs.TabLayout
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
-import miji.com.feedfit.fragments.RSSHomeFragment
+import miji.com.feedfit.fragments.RSSFavoritesFragment
 import miji.com.feedfit.fragments.RSSNewFragment
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
 import miji.com.feedfit.utilities.WebController
 
 
-class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteractionListener, RSSNewFragment.OnListFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), RSSFavoritesFragment.OnListFragmentInteractionListener, RSSNewFragment.OnListFragmentInteractionListener {
 
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private lateinit var realm: Realm
@@ -84,9 +84,9 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
                 }
                 super.onBackPressed()
             }
-            is RSSHomeFragment -> when ((fragment as? RSSHomeFragment)?.onBackPress()!!) {
-                RSSHomeFragment.CLOSE_HTML -> super.onBackPressed()
-                RSSHomeFragment.RETURN_FIRST_SCREEN -> mainViewContainer.currentItem = RSSNewFragment.FRAGMENTID
+            is RSSFavoritesFragment -> when ((fragment as? RSSFavoritesFragment)?.onBackPress()!!) {
+                RSSFavoritesFragment.CLOSE_HTML -> super.onBackPressed()
+                RSSFavoritesFragment.RETURN_FIRST_SCREEN -> mainViewContainer.currentItem = RSSNewFragment.FRAGMENTID
             }
         }
     }
@@ -101,8 +101,8 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
         private var mCurrentFragment: Fragment? = null
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                RSSHomeFragment.FRAGMENTID -> {
-                    val fragment: Fragment = RSSHomeFragment()
+                RSSFavoritesFragment.FRAGMENTID -> {
+                    val fragment: Fragment = RSSFavoritesFragment()
                     mPageReferenceMap[position] = fragment
                     fragment
                 }
@@ -141,8 +141,8 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     }
 
     override fun onListFragmentInteraction(item: RSS?) {
-        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSHomeFragment.FRAGMENTID)!!
-        if (fragment is RSSHomeFragment) {
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSFavoritesFragment.FRAGMENTID)!!
+        if (fragment is RSSFavoritesFragment) {
             fragment.swapAdapter(item!!.entries)
         }
     }
@@ -150,14 +150,14 @@ class MainActivity : AppCompatActivity(), RSSHomeFragment.OnListFragmentInteract
     override fun onListFragmentInteraction(item: RSSEntry?, index: Int) {
         val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(index)!!
         when (fragment) {
-            is RSSHomeFragment -> fragment.showHTML(item?.content!!)
+            is RSSFavoritesFragment -> fragment.showHTML(item?.content!!)
             is RSSNewFragment -> fragment.showHTML(item?.content!!)
         }
     }
 
     override fun updateFavorites() {
-        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSHomeFragment.FRAGMENTID)!!
-        if (fragment is RSSHomeFragment) {
+        val fragment: Fragment = mSectionsPagerAdapter!!.getFragment(RSSFavoritesFragment.FRAGMENTID)!!
+        if (fragment is RSSFavoritesFragment) {
             fragment.loadContent()
         }
     }

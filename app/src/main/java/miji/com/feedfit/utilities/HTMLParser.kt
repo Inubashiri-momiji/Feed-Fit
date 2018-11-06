@@ -20,10 +20,6 @@ class HTMLParser {
             return document.select("img[src~=(?i)\\.(a?png|jpe?g|giff?|tiff|bmp|)]")
         }
 
-        fun getDocumentURLS(document: Document): Elements {
-            return document.select("a[href]")
-        }
-
         fun getFaviconURL(document: Document): String {
             return document.head().select("link[href~=.*\\.(png)]")[0].attr("href")
         }

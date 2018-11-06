@@ -8,15 +8,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.realm.RealmList
-import kotlinx.android.synthetic.main.fragment_rss_home.view.*
+import kotlinx.android.synthetic.main.fragment_rss_favorites.view.*
 import miji.com.feedfit.R
-import miji.com.feedfit.fragments.RSSHomeFragment.OnListFragmentInteractionListener
+import miji.com.feedfit.fragments.RSSFavoritesFragment.OnListFragmentInteractionListener
 import miji.com.feedfit.model.RSS
 
-class RSSHomeRecyclerViewAdapter(
+class RSSFavoritesRecyclerViewAdapter(
         private val mValues: RealmList<RSS>? = null,
         private val mListener: OnListFragmentInteractionListener?)
-    : RecyclerView.Adapter<RSSHomeRecyclerViewAdapter.ViewHolder>() {
+    : RecyclerView.Adapter<RSSFavoritesRecyclerViewAdapter.ViewHolder>() {
     private val mOnClickListener: View.OnClickListener
 
 
@@ -30,7 +30,7 @@ class RSSHomeRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_rss_home, parent, false)
+                .inflate(R.layout.fragment_rss_favorites, parent, false)
         return ViewHolder(view)
     }
 

@@ -52,13 +52,13 @@
                 android:id="@+id/tabNewRSS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/tab_home_icon" />
+                android:icon="@drawable/tab_rss_icon" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabHome"
+                android:id="@+id/tabFavorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/tab_new_icon" />
+                android:icon="@drawable/tab_favorites_icon" />
         </com.google.android.material.tabs.TabLayout>
     </RelativeLayout>
 

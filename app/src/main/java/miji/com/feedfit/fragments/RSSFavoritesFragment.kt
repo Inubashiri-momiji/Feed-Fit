@@ -13,16 +13,16 @@ import androidx.recyclerview.widget.RecyclerView
 import io.realm.Realm
 import io.realm.RealmList
 import io.realm.kotlin.where
-import kotlinx.android.synthetic.main.fragment_rss_home_list.*
+import kotlinx.android.synthetic.main.fragment_rss_favorites_list.*
 import miji.com.feedfit.R
-import miji.com.feedfit.adapter.RSSHomeFeedsRecyclerViewAdapter
-import miji.com.feedfit.adapter.RSSHomeRecyclerViewAdapter
+import miji.com.feedfit.adapter.RSSFavoritesFeedsRecyclerViewAdapter
+import miji.com.feedfit.adapter.RSSFavoritesRecyclerViewAdapter
 import miji.com.feedfit.model.RSS
 import miji.com.feedfit.model.RSSEntry
 
 
-class RSSHomeFragment : Fragment() {
-    private lateinit var prevAdapter: RSSHomeRecyclerViewAdapter
+class RSSFavoritesFragment : Fragment() {
+    private lateinit var prevAdapter: RSSFavoritesRecyclerViewAdapter
     private var isHtmlOpen: Boolean = false
     private var columnCount = 1
     private var listener: OnListFragmentInteractionListener? = null
@@ -31,14 +31,14 @@ class RSSHomeFragment : Fragment() {
     private lateinit var realm: Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_rss_home_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_rss_favorites_list, container, false)
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = when {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = RSSHomeRecyclerViewAdapter(rss, listener)
+                adapter = RSSFavoritesRecyclerViewAdapter(rss, listener)
             }
         }
         return view
@@ -46,7 +46,7 @@ class RSSHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = homeRecyclerView
+        recyclerView = favoritesRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(context!!)
         loadContent()
     }
@@ -80,21 +80,21 @@ class RSSHomeFragment : Fragment() {
         val data = realm.copyFromRealm(realm.where<RSS>().findAll())
         val test: RealmList<RSS> = RealmList()
         test.addAll(data.subList(0, data.size))
-        val adapter = RSSHomeRecyclerViewAdapter(test, listener)
+        val adapter = RSSFavoritesRecyclerViewAdapter(test, listener)
         recyclerView.adapter = adapter
 
     }
 
     fun swapAdapter(item: RealmList<RSSEntry>) {
-        if (recyclerView.adapter is RSSHomeRecyclerViewAdapter) {
-            prevAdapter = recyclerView.adapter as RSSHomeRecyclerViewAdapter
+        if (recyclerView.adapter is RSSFavoritesRecyclerViewAdapter) {
+            prevAdapter = recyclerView.adapter as RSSFavoritesRecyclerViewAdapter
         }
-        val adapter = RSSHomeFeedsRecyclerViewAdapter(item, listener)
+        val adapter = RSSFavoritesFeedsRecyclerViewAdapter(item, listener)
         recyclerView.adapter = adapter
     }
 
     fun onBackPress(): Int {
-        return if (recyclerView.adapter!! !is RSSHomeRecyclerViewAdapter) {
+        return if (recyclerView.adapter!! !is RSSFavoritesRecyclerViewAdapter) {
             if (isHtmlOpen) {
                 isHtmlOpen = false
                 CLOSE_HTML
@@ -110,7 +110,7 @@ class RSSHomeFragment : Fragment() {
     fun showHTML(html: String) {
         isHtmlOpen = true
         val trans = fragmentManager!!.beginTransaction()
-        trans.replace(R.id.home_constraint_layout, WebViewFragment.newInstance(html))
+        trans.replace(R.id.favorites_constraint_layout, WebViewFragment.newInstance(html))
         trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         trans.addToBackStack(null)
         trans.commit()

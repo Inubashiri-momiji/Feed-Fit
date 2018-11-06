@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/home_constraint_layout"
-    android:name="miji.com.feedfit.Fragments.RSSHomeFragment"
+    android:id="@+id/favorites_constraint_layout"
+    android:name="miji.com.feedfit.Fragments.RSSFavoritesFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.RSSHomeFragment">
+    tools:context=".fragments.RSSFavoritesFragment">
 
     <ProgressBar
         android:id="@+id/scanProgressBar"
@@ -29,14 +29,14 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/homeRecyclerView"
+            android:id="@+id/favoritesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:clipChildren="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:listitem="@layout/fragment_rss_home" />
+            tools:listitem="@layout/fragment_rss_favorites" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
